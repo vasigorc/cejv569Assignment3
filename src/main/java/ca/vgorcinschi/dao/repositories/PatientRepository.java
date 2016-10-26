@@ -1,4 +1,4 @@
-package ca.vgorcinschi.dao;
+package ca.vgorcinschi.dao.repositories;
 
 import ca.vgorcinschi.model.Patient;
 import java.util.List;
@@ -25,15 +25,15 @@ public interface PatientRepository extends GenericRepository<Patient> {
             IncorrectResultSizeDataAccessException;
 
     /**
-     * when a record is found then all of its detail records must also be
+     * when a record(s) is found then all of its detail records must also be
      * retrieved
      *
      * @param lastName of the patient
-     * @return a patient object or 
+     * @return a list of patient 
      * @throws an exception (no patient found || more
      * then one found)
      */
-    public Patient findByLastName(String lastName) throws DataAccessException,
+    public List<Patient> findByLastName(String lastName) throws DataAccessException,
             IncorrectResultSizeDataAccessException;
     
     /**

@@ -32,7 +32,8 @@ public class Medication implements Serializable{
     /*
      constructor that initializes all fields;
      */
-    public Medication(int id, int patientId, LocalDateTime dateOfSurgery, String med, BigDecimal unitCost, BigDecimal units) {
+    public Medication(int id, int patientId, LocalDateTime dateOfSurgery, 
+            String med, BigDecimal unitCost, BigDecimal units) {
         this.id = id;
         this.patientId = patientId;
         this.dateOfSurgery = dateOfSurgery;

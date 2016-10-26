@@ -1,4 +1,4 @@
-package ca.vgorcinschi.dao;
+package ca.vgorcinschi.dao.repositories;
 
 import java.io.Serializable;
 
