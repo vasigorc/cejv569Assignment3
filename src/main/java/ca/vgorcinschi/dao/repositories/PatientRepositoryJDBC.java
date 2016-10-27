@@ -90,7 +90,7 @@ public class PatientRepositoryJDBC implements PatientRepository {
      * similar to the previous query, but there is no filter. Return all
      * patients.
      *
-     * @return
+     * @return list of all patients
      * @throws DataAccessException
      */
     @Override
@@ -125,5 +125,4 @@ public class PatientRepositoryJDBC implements PatientRepository {
     public void delete(Patient entity) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }
