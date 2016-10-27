@@ -17,9 +17,7 @@ public interface PatientRepository extends GenericRepository<Patient> {
      * retrieved
      *
      * @param patientId - the id of the patient
-     * @return a patient object or 
-     * @throws an exception (no patient found || more
-     * then one found)
+     * @return a patient object or
      */
     public Patient findById(int patientId) throws DataAccessException,
             IncorrectResultSizeDataAccessException;
@@ -29,17 +27,13 @@ public interface PatientRepository extends GenericRepository<Patient> {
      * retrieved
      *
      * @param lastName of the patient
-     * @return a list of patient 
-     * @throws an exception (no patient found || more
-     * then one found)
+     * @return a list of patient
      */
-    public List<Patient> findByLastName(String lastName) throws DataAccessException,
-            IncorrectResultSizeDataAccessException;
+    public List<Patient> findByLastName(String lastName) throws DataAccessException;
     
     /**
      * 
      * @return list of all patients
-     * @throws exception if query fails
      */
     public List<Patient> getAll() throws DataAccessException;
 }
