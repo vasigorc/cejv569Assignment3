@@ -5,6 +5,8 @@
  */
 package ca.vgorcinschi.dao.repositories;
 
+import ca.vgorcinschi.model.Patient;
+import java.time.LocalDateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,5 +75,18 @@ public class PatientRepositoryTests {
     }
     
     @Test
-    public void findAllPatientsTest(){}
+    public void findAllPatientsTest(){
+        assertTrue("5 is the initial batch.",repository.getAll().size()>=5);
+    }
+    
+    @Test
+    public void addAPatient(){
+        Patient p = new Patient();
+        p.setAdmissionDate(LocalDateTime.now().minusMonths(2));
+        p.setReleaseDate(LocalDateTime.now().minusMonths(1));
+        p.setDiagnosis("test diagnosis");
+        p.setFirstName("First");
+        p.setLastName("Last");
+        assertTrue(repository.add(p));
+    }
 }

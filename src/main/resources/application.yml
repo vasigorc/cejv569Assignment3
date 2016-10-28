@@ -1,11 +1,12 @@
 ## YAML Template.
 ##home username: vgorcinschi
 ##home password: Flag-Salary-Inward-Least-1
+## school username: root
+## school password: concordia
 ---
 spring:
     datasource: 
         url: jdbc:mysql://localhost:3306/HOSPITALDB
-        username: root
-        password: concordia
-    
+        username: vgorcinschi
+        password: Flag-Salary-Inward-Least-1
         

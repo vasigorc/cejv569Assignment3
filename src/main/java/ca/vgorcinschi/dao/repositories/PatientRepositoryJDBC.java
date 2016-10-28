@@ -1,10 +1,13 @@
 package ca.vgorcinschi.dao.repositories;
 
+import static ca.vgorcinschi.CommonUtil.*;
 import ca.vgorcinschi.model.Patient;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -20,6 +23,14 @@ import org.springframework.stereotype.Repository;
 @Qualifier("jdbc")
 @Repository
 public class PatientRepositoryJDBC implements PatientRepository {
+
+    /**
+     * note we will only use this logger to log methods that are void for
+     * methods which declare 'throws' we will use logger one level up in the
+     * service interface
+     */
+    private final Logger log
+            = LoggerFactory.getLogger(this.getClass().getName());
 
     //general select for patient(s)
     private final String generalSelect = "SELECT * FROM PATIENT";
@@ -111,18 +122,42 @@ public class PatientRepositoryJDBC implements PatientRepository {
         return patients;
     }
 
+    /**
+     * serialize the patient and save to the db
+     *
+     * @param entity - a Patient object
+     */
     @Override
-    public void add(Patient entity) {
+    public boolean add(Patient entity) {
+        //our prepared statement
+        String sql = "INSERT INTO PATIENT (LASTNAME, FIRSTNAME, DIAGNOSIS,"
+                + "ADMISSIONDATE, RELEASEDATE) VALUES (?, ?, ?, ?, ?)";
+        //using try-catch to log two scenarions
+        try {
+            /**
+             * this method does auto-conversion provided the sequence of the
+             * arguments is the same -
+             * @link http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html#update-java.lang.String-java.lang.Object...-
+             */
+            jdbcTemplate.update(sql, entity.getLastName(), entity.getFirstName(),
+                    entity.getDiagnosis(), localToSql.apply(entity.getAdmissionDate()),
+                    localToSql.apply(entity.getReleaseDate()));
+            log.info("Patient "+entity+" was successfully saved to the DB.");
+            return true;
+        } catch (DataAccessException e) {
+            log.error("SQL query for adding Patient " + entity + " failed. "
+                    + e.getMostSpecificCause().toString());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(Patient entity) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void update(Patient entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void delete(Patient entity) {
+    public boolean delete(Patient entity) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

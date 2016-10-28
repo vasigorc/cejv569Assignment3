@@ -11,11 +11,11 @@ import java.io.Serializable;
 public interface GenericRepository<E extends Serializable> {
 
     //add new record
-    public void add(E entity);
+    public boolean add(E entity);
 
     //update an existing record
-    public void update(E entity);
+    public boolean update(E entity);
 
     //delete an existing record
-    public void delete(E entity);
+    public boolean delete(E entity);
 }
