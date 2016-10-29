@@ -14,6 +14,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * the JDBC implementation of PatientRepository
@@ -36,12 +38,16 @@ public class PatientRepositoryJDBC implements PatientRepository {
     private final String generalSelect = "SELECT * FROM PATIENT";
 
     //configured in src.main.resources.application.yml
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    //Spring's transaction template is used to rollback the transaction
+    private final TransactionTemplate transactionTemplate;
 
     //point of injection
     @Autowired
-    public PatientRepositoryJDBC(JdbcTemplate jdbcTemplate) {
+    public PatientRepositoryJDBC(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.transactionTemplate = transactionTemplate;
     }
 
     /**
@@ -61,6 +67,7 @@ public class PatientRepositoryJDBC implements PatientRepository {
             //Patient object to be filled
             Patient candidate = new Patient();
             //populate the candidate 
+            candidate.setPatientId(patientId);
             candidate.setLastName(rs.getString("LASTNAME"));
             candidate.setFirstName(rs.getString("FIRSTNAME"));
             candidate.setDiagnosis(rs.getString("DIAGNOSIS"));
@@ -142,22 +149,92 @@ public class PatientRepositoryJDBC implements PatientRepository {
             jdbcTemplate.update(sql, entity.getLastName(), entity.getFirstName(),
                     entity.getDiagnosis(), localToSql.apply(entity.getAdmissionDate()),
                     localToSql.apply(entity.getReleaseDate()));
-            log.info("Patient "+entity+" was successfully saved to the DB.");
+            log.info("Patient " + entity + " was successfully saved to the DB.");
             return true;
         } catch (DataAccessException e) {
+            //log error and return false
             log.error("SQL query for adding Patient " + entity + " failed. "
                     + e.getMostSpecificCause().toString());
             return false;
         }
     }
 
+    /**
+     * update one Patient record
+     *
+     * @param entity - a patient object
+     * @return true if we updated one and only one db record, false otherwise
+     */
     @Override
     public boolean update(Patient entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (entity.getPatientId() > 0) {
+            /*
+             creating a new controlled transaction. obtain a callback function
+             (new TransactionCallback<Boolean>(TransactionStatus)) from the 
+             transaction template. This function takes only one argument - Transaction
+             status which can rollback a transaction. Using lambda we avoid the
+             explicit new TransactionCallback<Boolean>(TransactionStatus) declaration
+             */
+            return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
+                //prepared statement
+                String updateStatement = "UPDATE PATIENT SET LASTNAME = ?,"
+                        + " FIRSTNAME=?, DIAGNOSIS=?, ADMISSIONDATE=?, RELEASEDATE=? "
+                        + "WHERE PATIENTID=?";
+                //query arguments, jdbcTemplate will automatically cast the types
+                Object[] args = {entity.getLastName(), entity.getFirstName(), entity.getDiagnosis(),
+                    localToSql.apply(entity.getAdmissionDate()), localToSql.apply(entity.getReleaseDate()),
+                    entity.getPatientId()};
+                //update the db, return the # of affected rows
+                if (jdbcTemplate.update(updateStatement, args) == 1) {
+                    log.info("Patient successfully updated in the database: "+entity);
+                    return true;
+                }
+                //if other then one row was affected roll back transaction
+                //and log error
+                transactionStatus.setRollbackOnly();
+                log.error("Couldn't update " + entity + ". Query tried to modify "
+                        + "more/less then one row. Check db design.");
+                return false;
+            });
+        } else {
+            //log error and return false
+            log.error(entity + " doesn't have a valid id. Persistance skipped.");
+            return false;
+        }
     }
 
+    /**
+     * this is the only method for which we don't have to also update detail
+     * records. All details records have CASCADE DELETE
+     *
+     * @param entity - patient that we want to delete
+     * @return boolean if we managed to delete the patient or not
+     */
     @Override
-    public boolean delete(Patient entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean delete(int id) {
+        if (id > 0) {
+            /*
+             creating a new controlled transaction. obtain a callback function
+             (new TransactionCallback<Boolean>(TransactionStatus)) from the 
+             transaction template. This function takes only one argument - Transaction
+             status which can rollback a transaction. Using lambda we avoid the
+             explicit new TransactionCallback<Boolean>(TransactionStatus){} declaration
+             */
+            return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
+                String deleteStatement = "DELETE FROM PATIENT WHERE PATIENTID = ?";
+                //update the db, return the # of deleted rows
+                if (jdbcTemplate.update(deleteStatement, id) == 1) {
+                    log.info("Patient with id "+id+" has been removed from "
+                            + "the database");
+                    return true;
+                }
+                log.error(id + " isn't a valid id. Deleting skipped.");
+                return false;
+            });
+        } else {
+            log.error("Cannot delete a patient: " + id + " is an invalid "
+                    + "id");
+            return false;
+        }
     }
 }

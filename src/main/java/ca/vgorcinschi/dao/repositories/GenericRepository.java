@@ -17,5 +17,5 @@ public interface GenericRepository<E extends Serializable> {
     public boolean update(E entity);
 
     //delete an existing record
-    public boolean delete(E entity);
+    public boolean delete(int id);
 }

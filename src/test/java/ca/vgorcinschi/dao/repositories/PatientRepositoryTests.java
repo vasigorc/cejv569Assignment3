@@ -7,6 +7,7 @@ package ca.vgorcinschi.dao.repositories;
 
 import ca.vgorcinschi.model.Patient;
 import java.time.LocalDateTime;
+import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,11 +39,20 @@ public class PatientRepositoryTests {
     @Autowired
     private PatientRepository repository;
 
+    private Patient dummy;
+
     public PatientRepositoryTests() {
+
     }
 
     @Before
     public void setUp() {
+        dummy = new Patient();
+        dummy.setAdmissionDate(LocalDateTime.now().minusMonths(2));
+        dummy.setReleaseDate(LocalDateTime.now().minusMonths(1));
+        dummy.setDiagnosis("test diagnosis");
+        dummy.setFirstName("First");
+        dummy.setLastName("Last");
     }
 
     @After
@@ -73,20 +83,41 @@ public class PatientRepositoryTests {
         //pass-in a ridiculously large id number
         repository.findById(2000).getDiagnosis();
     }
-    
+
     @Test
-    public void findAllPatientsTest(){
-        assertTrue("5 is the initial batch.",repository.getAll().size()>=5);
+    public void findAllPatientsTest() {
+        assertTrue("5 is the initial batch.", repository.getAll().size() >= 5);
+    }
+
+    @Test
+    public void addAPatientTest() {
+        assertTrue(repository.add(dummy));
+    }
+
+    @Test
+    public void updatePatientTest() {
+        Patient p = repository.findById(6);
+        p.setFirstName("Test succeeded");
+        assertTrue(repository.update(p));
+    }
+
+    @Test
+    public void failedUpdatePatientTest() {
+        //try to update a patient with no id (equivalent to 0)
+        dummy.setPatientId(0);
+        assertFalse(repository.update(dummy));
+    }
+
+    @Test
+    public void deletePatientTest() {
+        //random int > 5 (don't want to delete our default values) but less then 15
+        //source=http://stackoverflow.com/questions/363681/generating-random-integers-in-a-specific-range
+        int id = new Random().nextInt((15 - 5) + 1) + 5;
+        assertTrue(repository.delete(id));
     }
     
     @Test
-    public void addAPatient(){
-        Patient p = new Patient();
-        p.setAdmissionDate(LocalDateTime.now().minusMonths(2));
-        p.setReleaseDate(LocalDateTime.now().minusMonths(1));
-        p.setDiagnosis("test diagnosis");
-        p.setFirstName("First");
-        p.setLastName("Last");
-        assertTrue(repository.add(p));
+    public void failedDeletePatientTest(){
+        assertFalse(repository.delete(0));
     }
 }
