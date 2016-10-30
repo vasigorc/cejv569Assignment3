@@ -27,7 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class PatientRepositoryJDBC implements PatientRepository {
 
     /**
-     * note we will only use this logger to log methods that are void for
+     * note we will only use this logger to log methods that return boolean. For
      * methods which declare 'throws' we will use logger one level up in the
      * service interface
      */

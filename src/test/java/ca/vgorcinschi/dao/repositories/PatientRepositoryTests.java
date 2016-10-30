@@ -39,6 +39,7 @@ public class PatientRepositoryTests {
     @Autowired
     private PatientRepository repository;
 
+    //target for tests
     private Patient dummy;
 
     public PatientRepositoryTests() {
