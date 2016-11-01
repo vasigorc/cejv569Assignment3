@@ -5,6 +5,7 @@ import ca.vgorcinschi.model.Inpatient;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -199,6 +201,9 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
 
     @Override
     public List<Inpatient> getPatientDetails(int patientId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //the prepared statement
+        String sql = "SELECT * FROM INPATIENT WHERE PATIENTID = ?";
+        //auto mapping the db columns to data bean properties: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Inpatient.class), patientId);
     }
 }

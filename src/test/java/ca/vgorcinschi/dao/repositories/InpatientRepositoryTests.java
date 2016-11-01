@@ -53,7 +53,7 @@ public class InpatientRepositoryTests {
         inpatient = new Inpatient();
         //assign to a random patient with id 1-20
         //source=http://stackoverflow.com/questions/363681/generating-random-integers-in-a-specific-range
-        int id = random.nextInt((26 - 1) + 1) + 1;
+        int id = random.nextInt((13 - 1) + 1) + 1;
         inpatient.setPatientId(id);
         inpatient.setDailyRate(valueOf(10));
         inpatient.setDateOfStay(of(2016, Month.MARCH, 15, 10, 00));
@@ -76,7 +76,7 @@ public class InpatientRepositoryTests {
      test. Increase the range in line 56
      */
     @Test
-    @Ignore
+    //@Ignore
     public void addInpatientTest() {
         assertTrue(repository.add(inpatient));
     }
@@ -119,5 +119,17 @@ public class InpatientRepositoryTests {
                 }).collect(Collectors.toList());
         //theoretically our test should return true
         assertTrue(repository.updateBatch(inpatients));
+    }
+
+    @Test
+    public void getPatientDetailsTest() {
+        List<Inpatient> inpatients = repository.getPatientDetails(3);
+        assertTrue("It should be more then 1.", inpatients.size() > 1
+                && inpatients.stream().allMatch((Inpatient i) -> {
+                    return i.getPatientId() == 3;
+                }));
+        inpatients.stream().forEach((i) -> {
+            System.out.println(i);
+        });
     }
 }
