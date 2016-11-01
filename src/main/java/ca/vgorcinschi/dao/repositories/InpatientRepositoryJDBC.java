@@ -129,6 +129,7 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
                             + "the database");
                     return true;
                 }
+                transactionStatus.setRollbackOnly();
                 log.error(id + " isn't a valid id. Deleting skipped.");
                 return false;
             });
@@ -187,6 +188,7 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
                             + "updated.");
                     return true;
                 }
+                transactionStatus.setRollbackOnly();
                 log.error("Rolled back batch update of " + entities.size() + " records for patient "
                         + "with id " + entities.get(0).getPatientId() + " for the attempt "
                         + "to modify <>1 record(s) with a single update statement");
