@@ -71,10 +71,7 @@ public class InpatientRepositoryTests {
         assertNotNull(repository);
     }
 
-    /*
-     Ignoring for now - too many created. To increase the chance of a successfull
-     test. Increase the range in line 56
-     */
+    //Ignoring for now - too many created. 
     @Test
     //@Ignore
     public void addInpatientTest() {
@@ -88,7 +85,7 @@ public class InpatientRepositoryTests {
          inpatient by id or name. We will manually 'hard' set the id
          to an existing id in the db and try to update it.
          */
-        inpatient.setId(7);
+        inpatient.setId(6);
         assertTrue(repository.update(inpatient));
     }
 

@@ -2,10 +2,8 @@ package ca.vgorcinschi.dao.repositories;
 
 import static ca.vgorcinschi.CommonUtil.localToSql;
 import ca.vgorcinschi.model.Inpatient;
-import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;

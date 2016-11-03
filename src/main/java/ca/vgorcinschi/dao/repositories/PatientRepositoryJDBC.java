@@ -133,6 +133,7 @@ public class PatientRepositoryJDBC implements PatientRepository {
      * serialize the patient and save to the db
      *
      * @param entity - a Patient object
+     * @return 
      */
     @Override
     public boolean add(Patient entity) {

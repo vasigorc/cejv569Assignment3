@@ -7,7 +7,6 @@ package ca.vgorcinschi.dao.repositories;
 
 import ca.vgorcinschi.model.Patient;
 import java.time.LocalDateTime;
-import java.util.Random;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,9 +110,11 @@ public class PatientRepositoryTests {
 
     @Test
     public void deletePatientTest() {
-        //random int > 5 (don't want to delete our default values) but less then 15
-        //source=http://stackoverflow.com/questions/363681/generating-random-integers-in-a-specific-range
-        int id = new Random().nextInt((15 - 5) + 1) + 5;
+        //we need some extra calls to the db make sure we are always have 
+        //a good id of the item to delete
+        dummy.setLastName("deletePatientTest");
+        repository.add(dummy);
+        int id = repository.findByLastName("deletePatientTest").get(0).getPatientId();
         assertTrue(repository.delete(id));
     }
     
