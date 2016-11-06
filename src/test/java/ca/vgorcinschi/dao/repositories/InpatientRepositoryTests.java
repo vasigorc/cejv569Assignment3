@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -124,8 +125,11 @@ public class InpatientRepositoryTests {
                 && inpatients.stream().allMatch((Inpatient i) -> {
                     return i.getPatientId() == 3;
                 }));
-        inpatients.stream().forEach((i) -> {
-            System.out.println(i);
-        });
+    }
+    
+    @Test
+    public void failedGetSurgicalDetailsTest() {
+        //pass-in a ridiculously large number
+        assertThat(repository.getPatientDetails(10000).isEmpty(), is(true));
     }
 }

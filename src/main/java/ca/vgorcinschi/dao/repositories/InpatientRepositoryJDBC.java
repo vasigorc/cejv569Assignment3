@@ -4,6 +4,7 @@ import static ca.vgorcinschi.CommonUtil.localToSql;
 import ca.vgorcinschi.model.Inpatient;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
@@ -198,7 +199,10 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
     public List<Inpatient> getPatientDetails(int patientId) {
         //the prepared statement
         String sql = "SELECT * FROM INPATIENT WHERE PATIENTID = ?";
+        //create an empty List of Inpatients
+        List<Inpatient> inpatients = new ArrayList<>();
         //auto mapping the db columns to data bean properties: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html
-        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Inpatient.class), patientId);
+        inpatients = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Inpatient.class), patientId);
+        return inpatients;
     }
 }

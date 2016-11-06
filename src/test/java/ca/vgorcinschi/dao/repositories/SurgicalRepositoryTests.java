@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class SurgicalRepositoryTests {
     //this test class' logger
     private final Logger log
             = LoggerFactory.getLogger(this.getClass().getName());
-    
+
     @Autowired
     private SurgicalRepository repository;
 
@@ -39,11 +40,11 @@ public class SurgicalRepositoryTests {
 
     //random used in the setUp() method. It is cheaper to reuse one Random object
     private final Random random;
-    
+
     public SurgicalRepositoryTests() {
         random = new Random(System.currentTimeMillis());
     }
-    
+
     @Before
     public void setUp() {
         surgical = new Surgical();
@@ -57,7 +58,7 @@ public class SurgicalRepositoryTests {
         surgical.setSurgery("A surgery");
         surgical.setSurgeonFee(valueOf(7));
     }
-    
+
     @Test
     public void surgicalRepoIsNotNull() {
         assertNotNull(repository);
@@ -68,7 +69,7 @@ public class SurgicalRepositoryTests {
     public void addSurgicalTest() {
         assertTrue(repository.add(surgical));
     }
-    
+
     @Test
     public void updateSurgicalTest() {
         /*
@@ -89,7 +90,7 @@ public class SurgicalRepositoryTests {
          */
         assertFalse(repository.delete(12500));
     }
-    
+
     @Test
     public void batchUpdateSurgicalstTest() {
         /*
@@ -105,10 +106,31 @@ public class SurgicalRepositoryTests {
         //theoretically our test should return true
         assertTrue(repository.updateBatch(surgicals));
     }
-    
+
     @Test
     public void failedBatchUpdateSurgicalTest() {
         //test by sending an empty list to the method
-        assertFalse(repository.updateBatch(new ArrayList<Surgical>()));
+        assertFalse(repository.updateBatch(new ArrayList<>()));
+    }
+
+    @Test
+    public void getSurgicalDetailsTest() {
+        //I couldn't come up with a better test than looking up an patient 
+        //with 1+ surgicals
+        List<Surgical> surgicals = repository.getPatientDetails(2);
+        assertTrue("It should be more then 1.", surgicals.size() > 1
+                && surgicals.stream().allMatch((Surgical s)
+                        -> s.getPatientId() == 2
+                ));
+    }
+
+    /*
+     Here we're testing the behavior of the 'getPatientDetails' method
+     when there are no surgical records associated to the patientid
+     */
+    @Test
+    public void failedGetSurgicalDetailsTest() {
+        //pass-in a ridiculously large number
+        assertThat(repository.getPatientDetails(10000).isEmpty(), is(true));
     }
 }

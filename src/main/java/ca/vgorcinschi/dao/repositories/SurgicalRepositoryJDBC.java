@@ -4,12 +4,14 @@ import static ca.vgorcinschi.CommonUtil.localToSql;
 import ca.vgorcinschi.dao.repositories.helpers.SurgicalBatchPreparedStatementSetter;
 import ca.vgorcinschi.dao.repositories.helpers.SurgicalTransactionCallback;
 import ca.vgorcinschi.model.Surgical;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -163,6 +165,12 @@ public class SurgicalRepositoryJDBC implements SurgicalRepository {
 
     @Override
     public List<Surgical> getPatientDetails(int patientId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //the prepared statement
+        String sql = "SELECT * FROM SURGICAL WHERE PATIENTID = ?";
+        //create an empty List of Surgical's
+        List<Surgical> surgicals = new ArrayList<>();
+        //auto mapping the db columns to data bean properties: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html
+        surgicals = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Surgical.class), patientId);
+        return surgicals;
     }
 }
