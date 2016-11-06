@@ -41,6 +41,11 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
     //Spring's transaction template is used to rollback the transaction
     private final TransactionTemplate transactionTemplate;
 
+    //prepared statement that will be used by two methods
+    private final String updatePreparedStatement = "UPDATE INPATIENT SET PATIENTID = ?,"
+            + " DATEOFSTAY=?, ROOMNUMBER=?, DAILYRATE=?, SUPPLIES=? "
+            + ",SERVICES =? WHERE ID=?";
+
     //injection point
     @Autowired
     public InpatientRepositoryJDBC(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
@@ -84,16 +89,12 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
              explicit new TransactionCallback<Boolean>(TransactionStatus) declaration
              */
             return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
-                //prepared statement
-                String updateStatement = "UPDATE INPATIENT SET PATIENTID = ?,"
-                        + " DATEOFSTAY=?, ROOMNUMBER=?, DAILYRATE=?, SUPPLIES=? "
-                        + ",SERVICES =? WHERE ID=?";
                 //query arguments, jdbcTemplate will automatically cast the types
                 Object[] args = {entity.getPatientId(), localToSql.apply(entity.getDateOfStay()),
                     entity.getRoomNumber(), entity.getDailyRate(), entity.getSupplies(),
                     entity.getServices(), entity.getId()};
                 //update the db, return the # of affected rows
-                if (jdbcTemplate.update(updateStatement, args) == 1) {
+                if (jdbcTemplate.update(updatePreparedStatement, args) == 1) {
                     log.info("Inpatient successfully updated in the database: " + entity);
                     return true;
                 }
@@ -143,16 +144,12 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
     @Override
     public boolean updateBatch(List<Inpatient> entities) {
         //if there's nothing to update - return false
-        if (entities.isEmpty()) {
+        if (entities == null || entities.isEmpty()) {
             log.warn("updateBatch() was called on an empty Inpatients list.");
             return false;
         } else {
             //view comments for the block in lines 117-123
             return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
-                //prepared statement that will be used for updating each record
-                String sql = "UPDATE INPATIENT SET PATIENTID = ?,"
-                        + " DATEOFSTAY=?, ROOMNUMBER=?, DAILYRATE=?, SUPPLIES=? "
-                        + ",SERVICES =? WHERE ID=?";
                 /**
                  * a couple of notes about batchUpdate() method. It executes the
                  *
@@ -160,7 +157,7 @@ public class InpatientRepositoryJDBC implements InpatientRepository {
                  * @return an array of integers (where integers is number of
                  * rows affected) by each query
                  */
-                int[] arrayOfaffectedRows = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                int[] arrayOfaffectedRows = jdbcTemplate.batchUpdate(updatePreparedStatement, new BatchPreparedStatementSetter() {
                     @Override
                     public int getBatchSize() {
                         return entities.size();

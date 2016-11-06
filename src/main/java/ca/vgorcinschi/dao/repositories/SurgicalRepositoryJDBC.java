@@ -1,6 +1,8 @@
 package ca.vgorcinschi.dao.repositories;
 
 import static ca.vgorcinschi.CommonUtil.localToSql;
+import ca.vgorcinschi.dao.repositories.helpers.SurgicalBatchPreparedStatementSetter;
+import ca.vgorcinschi.dao.repositories.helpers.SurgicalTransactionCallback;
 import ca.vgorcinschi.model.Surgical;
 import java.util.List;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.SimpleTransactionStatus;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -41,6 +44,11 @@ public class SurgicalRepositoryJDBC implements SurgicalRepository {
 
     //Spring's transaction template is used to rollback the transaction
     private final TransactionTemplate transactionTemplate;
+
+    //prepared statement
+    private final String updatePreparedStatement = "UPDATE SURGICAL SET PATIENTID = ?,"
+            + " DATEOFSURGERY=?, SURGERY=?, ROOMFEE=?, SURGEONFEE=? "
+            + ",SUPPLIES =? WHERE ID=?";
 
     //point of injection
     @Autowired
@@ -85,16 +93,12 @@ public class SurgicalRepositoryJDBC implements SurgicalRepository {
              explicit new TransactionCallback<Boolean>(TransactionStatus) declaration
              */
             return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
-                //prepared statement
-                String updateStatement = "UPDATE SURGICAL SET PATIENTID = ?,"
-                        + " DATEOFSURGERY=?, SURGERY=?, ROOMFEE=?, SURGEONFEE=? "
-                        + ",SUPPLIES =? WHERE ID=?";
                 //query arguments, jdbcTemplate will automatically cast the types
                 Object[] args = {entity.getPatientId(), localToSql.apply(entity.getDateOfSurgery()),
                     entity.getSurgery(), entity.getRoomFee(), entity.getSurgeonFee(),
                     entity.getSupplies(), entity.getId()};
                 //update the db, return the # of affected rows
-                if (jdbcTemplate.update(updateStatement, args) == 1) {
+                if (jdbcTemplate.update(updatePreparedStatement, args) == 1) {
                     log.info("Surgical successfully updated in the database: " + entity);
                     return true;
                 }
@@ -143,7 +147,18 @@ public class SurgicalRepositoryJDBC implements SurgicalRepository {
 
     @Override
     public boolean updateBatch(List<Surgical> entities) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //if there's nothing to update - return false
+        if (entities == null || entities.isEmpty()) {
+            log.warn("updateBatch() was called on an empty Surgicals list.");
+            return false;
+        } else {
+            //create an instance of SurgicalTransactionCallback
+            //pass in: jdbcTemplate, the prepared statement and a cyclic setter for it
+            SurgicalTransactionCallback stc = new SurgicalTransactionCallback(
+                    new SurgicalBatchPreparedStatementSetter(entities), updatePreparedStatement, jdbcTemplate);
+            //SimpleTransactionStatus is the simplest impl of TransactionStatus
+            return stc.doInTransaction(new SimpleTransactionStatus(true));
+        }
     }
 
     @Override

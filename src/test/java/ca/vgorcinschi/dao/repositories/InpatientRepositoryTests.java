@@ -53,7 +53,7 @@ public class InpatientRepositoryTests {
         inpatient = new Inpatient();
         //assign to a random patient with id 1-20
         //source=http://stackoverflow.com/questions/363681/generating-random-integers-in-a-specific-range
-        int id = random.nextInt((13 - 1) + 1) + 1;
+        int id = random.nextInt((5 - 1) + 1) + 1;
         inpatient.setPatientId(id);
         inpatient.setDailyRate(valueOf(10));
         inpatient.setDateOfStay(of(2016, Month.MARCH, 15, 10, 00));
@@ -106,10 +106,9 @@ public class InpatientRepositoryTests {
         /*
          The test lies in creating a list of inpatients with existing ids
          (note that) id of the patient isn't important and passing it to
-         the repository's method. With the help of an IntStream we will
-         collect a list of inpatients with ids between 5 and 11
+         the repository's method.
          */
-        List<Inpatient> inpatients = IntStream.rangeClosed(5, 11).boxed()
+        List<Inpatient> inpatients = IntStream.rangeClosed(1, 5).boxed()
                 .map((Integer i) -> {
                     inpatient.setId(i);
                     return inpatient;

@@ -3,8 +3,11 @@ package ca.vgorcinschi.dao.repositories;
 import ca.vgorcinschi.model.Surgical;
 import static java.math.BigDecimal.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import static org.junit.Assert.assertNotNull;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +30,7 @@ public class SurgicalRepositoryTests {
     //this test class' logger
     private final Logger log
             = LoggerFactory.getLogger(this.getClass().getName());
-
+    
     @Autowired
     private SurgicalRepository repository;
 
@@ -36,11 +39,11 @@ public class SurgicalRepositoryTests {
 
     //random used in the setUp() method. It is cheaper to reuse one Random object
     private final Random random;
-
+    
     public SurgicalRepositoryTests() {
         random = new Random(System.currentTimeMillis());
     }
-
+    
     @Before
     public void setUp() {
         surgical = new Surgical();
@@ -54,12 +57,12 @@ public class SurgicalRepositoryTests {
         surgical.setSurgery("A surgery");
         surgical.setSurgeonFee(valueOf(7));
     }
-
+    
     @Test
     public void surgicalRepoIsNotNull() {
         assertNotNull(repository);
     }
-    
+
     //only associating the surgical to the first 20 patients (by their ids)
     @Test
     public void addSurgicalTest() {
@@ -67,7 +70,7 @@ public class SurgicalRepositoryTests {
     }
     
     @Test
-    public void updateSurgicalTest(){
+    public void updateSurgicalTest() {
         /*
          We don't have and we don't need a method for retrieving an 
          inpatient by id or name. We will manually 'hard' set the id
@@ -76,14 +79,36 @@ public class SurgicalRepositoryTests {
         surgical.setId(6);
         assertTrue(repository.update(surgical));
     }
-    
+
     //skipping the test to not delete too many
     @Test
     public void deleteInpatientTest() {
         /*
-            Instead of deleting actual records (which we don't have too many)
-            we will expect false from a ridiculously high id
-        */
+         Instead of deleting actual records (which we don't have too many)
+         we will expect false from a ridiculously high id
+         */
         assertFalse(repository.delete(12500));
+    }
+    
+    @Test
+    public void batchUpdateSurgicalstTest() {
+        /*
+         The test lies in creating a list of inpatients with existing ids
+         (note that) id of the patient isn't important and passing it to
+         the repository's method.
+         */
+        List<Surgical> surgicals = IntStream.rangeClosed(1, 5).boxed()
+                .map((Integer i) -> {
+                    surgical.setId(i);
+                    return surgical;
+                }).collect(Collectors.toList());
+        //theoretically our test should return true
+        assertTrue(repository.updateBatch(surgicals));
+    }
+    
+    @Test
+    public void failedBatchUpdateSurgicalTest() {
+        //test by sending an empty list to the method
+        assertFalse(repository.updateBatch(new ArrayList<Surgical>()));
     }
 }
