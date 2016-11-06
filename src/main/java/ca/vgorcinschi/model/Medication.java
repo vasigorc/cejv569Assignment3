@@ -17,7 +17,7 @@ public class Medication implements Serializable{
     //foreign key
     private int patientId;
     //db column "DATEOFMED", we will convert to Timestamp when talking to db
-    private LocalDateTime dateOfSurgery;
+    private LocalDateTime dateOfMedication;
     //db column "MED"
     private String med;
     //columns: "UNITCOST", "UNITS"
@@ -36,7 +36,7 @@ public class Medication implements Serializable{
             String med, BigDecimal unitCost, BigDecimal units) {
         this.id = id;
         this.patientId = patientId;
-        this.dateOfSurgery = dateOfSurgery;
+        this.dateOfMedication = dateOfSurgery;
         this.med = med;
         this.unitCost = unitCost;
         this.units = units;
@@ -58,12 +58,12 @@ public class Medication implements Serializable{
         this.patientId = patientId;
     }
 
-    public LocalDateTime getDateOfSurgery() {
-        return dateOfSurgery;
+    public LocalDateTime getDateOfMedication() {
+        return dateOfMedication;
     }
 
-    public void setDateOfSurgery(LocalDateTime dateOfSurgery) {
-        this.dateOfSurgery = dateOfSurgery;
+    public void setDateOfMedication(LocalDateTime dateOfMedication) {
+        this.dateOfMedication = dateOfMedication;
     }
 
     public String getMed() {
@@ -95,7 +95,7 @@ public class Medication implements Serializable{
         int hash = 5;
         hash = 83 * hash + this.id;
         hash = 83 * hash + this.patientId;
-        hash = 83 * hash + Objects.hashCode(this.dateOfSurgery);
+        hash = 83 * hash + Objects.hashCode(this.dateOfMedication);
         hash = 83 * hash + Objects.hashCode(this.med);
         hash = 83 * hash + Objects.hashCode(this.unitCost);
         hash = 83 * hash + Objects.hashCode(this.units);
@@ -117,7 +117,7 @@ public class Medication implements Serializable{
         if (this.patientId != other.patientId) {
             return false;
         }
-        if (!Objects.equals(this.dateOfSurgery, other.dateOfSurgery)) {
+        if (!Objects.equals(this.dateOfMedication, other.dateOfMedication)) {
             return false;
         }
         if (!Objects.equals(this.med, other.med)) {
@@ -131,6 +131,6 @@ public class Medication implements Serializable{
 
     @Override
     public String toString() {
-        return "Medication{" + "id=" + id + ", patientId=" + patientId + ", dateOfSurgery=" + dateOfSurgery + ", med=" + med + ", unitCost=" + unitCost + ", units=" + units + '}';
+        return "Medication{" + "id=" + id + ", patientId=" + patientId + ", dateOfSurgery=" + dateOfMedication + ", med=" + med + ", unitCost=" + unitCost + ", units=" + units + '}';
     }
 }

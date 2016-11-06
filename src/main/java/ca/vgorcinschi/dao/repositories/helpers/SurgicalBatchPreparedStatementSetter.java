@@ -19,7 +19,6 @@ public class SurgicalBatchPreparedStatementSetter implements BatchPreparedStatem
     private final List<Surgical> surgicals;
 
     public SurgicalBatchPreparedStatementSetter(List<Surgical> surgicals) {
-//        super(entities);
         this.surgicals = surgicals;
     }
 
