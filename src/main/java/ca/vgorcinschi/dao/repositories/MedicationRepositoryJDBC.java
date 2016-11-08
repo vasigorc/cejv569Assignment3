@@ -1,14 +1,18 @@
 package ca.vgorcinschi.dao.repositories;
 
 import static ca.vgorcinschi.CommonUtil.localToSql;
+import ca.vgorcinschi.dao.repositories.helpers.MedicationBatchPreparedStatementSetter;
 import ca.vgorcinschi.dao.repositories.helpers.MedicationPreparedStatementSetter;
 import ca.vgorcinschi.model.Medication;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -107,17 +111,63 @@ public class MedicationRepositoryJDBC implements MedicationRepository {
 
     @Override
     public boolean delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (id > 0) {
+            return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
+                String deleteStatement = "DELETE FROM MEDICATION WHERE ID = ?";
+                //update the db, return the # of deleted rows
+                if (jdbcTemplate.update(deleteStatement, id) == 1) {
+                    log.info("Medication with id " + id + " deleted from the database");
+                    return true;
+                }
+                transactionStatus.setRollbackOnly();
+                log.error(id + " is an invalid id. Deleting skipped.");
+                return false;
+            });
+        } else {
+            log.error("Cannot delete the Medication: " + id + " is an invalid "
+                    + "id");
+            return false;
+        }
     }
 
     @Override
     public boolean updateBatch(List<Medication> entities) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //if there's nothing to update - return false
+        if (entities == null || entities.isEmpty()) {
+            log.warn("updateBatch() was called on an empty Medications' list.");
+            return false;
+        } else {
+            //I think this is an optimal implementations of the use of TransactionTemplate 
+            //with BatchPreparedStatementSetter - see also Inpatient & Surgical RepositoryJDBCs
+            return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
+                int[] arrayOfaffectedRows = jdbcTemplate.batchUpdate(updatePreparedStatement, 
+                        new MedicationBatchPreparedStatementSetter(entities));
+                //Did every query update only one row in the DB?
+                if (Arrays.stream(arrayOfaffectedRows).allMatch(i -> i == 1)) {
+                    log.info(entities.size() + " surgical records for patient "
+                            + "with id " + entities.get(0).getPatientId() + " have been successfully "
+                            + "updated.");
+                    return true;
+                }
+                //else - rollback
+                transactionStatus.setRollbackOnly();
+                log.error("Rolled back batch update of " + entities.size() + " records for patient "
+                        + "with id " + entities.get(0).getPatientId() + " for the attempt "
+                        + "to modify <>1 record(s) with a single update statement");
+                return false;
+            });
+        }
     }
 
     @Override
     public List<Medication> getPatientDetails(int patientId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         //the prepared statement
+        String sql = "SELECT * FROM MEDICATION WHERE PATIENTID = ?";
+        //create an empty List of Surgical's
+        List<Medication> medications = new ArrayList<>();
+        //auto mapping the db columns to data bean properties: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html
+        medications = jdbcTemplate.query(sql, 
+                BeanPropertyRowMapper.newInstance(Medication.class), patientId);
+        return medications;
     }
-
 }

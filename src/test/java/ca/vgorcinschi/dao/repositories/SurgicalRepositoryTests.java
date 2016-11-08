@@ -83,7 +83,7 @@ public class SurgicalRepositoryTests {
 
     //skipping the test to not delete too many
     @Test
-    public void deleteInpatientTest() {
+    public void deleteSurgicalTest() {
         /*
          Instead of deleting actual records (which we don't have too many)
          we will expect false from a ridiculously high id

@@ -8,7 +8,10 @@ package ca.vgorcinschi.dao.repositories;
 import ca.vgorcinschi.model.Medication;
 import static java.math.BigDecimal.valueOf;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +84,7 @@ public class MedicationRepositoryTests {
         medication.setPatientId(10000);
         assertFalse(repository.add(medication));
     }
-    
+
     @Test
     public void updateMedicationTest() {
         /*
@@ -91,5 +94,41 @@ public class MedicationRepositoryTests {
          */
         medication.setId(6);
         assertTrue(repository.update(medication));
+    }
+
+    @Test
+    public void deleteMedicationTest() {
+        /*
+         Instead of deleting actual records (which we don't have too many)
+         we will expect false from a ridiculously high id
+         */
+        assertFalse(repository.delete(12500));
+    }
+
+    @Test
+    public void batchUpdateMedicationTest() {
+        /*
+         The test lies in creating a list of inpatients with existing ids
+         (note that) id of the patient isn't important and passing it to
+         the repository's method.
+         */
+        List<Medication> medications = IntStream.rangeClosed(1, 5).boxed()
+                .map((Integer i) -> {
+                    medication.setId(i);
+                    return medication;
+                }).collect(Collectors.toList());
+        //theoretically our test should return true
+        assertTrue(repository.updateBatch(medications));
+    }
+
+    @Test
+    public void getSurgicalDetailsTest() {
+        //I couldn't come up with a better test than looking up an patient 
+        //with 1+ surgicals
+        List<Medication> medications = repository.getPatientDetails(2);
+        assertTrue("It should be more then 1.", medications.size() > 1
+                && medications.stream().allMatch((Medication m)
+                        -> m.getPatientId() == 2
+                ));
     }
 }
