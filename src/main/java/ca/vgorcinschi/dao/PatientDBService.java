@@ -1,4 +1,4 @@
-package ca.vgorcinschi.dao.repositories;
+package ca.vgorcinschi.dao;
 
 import ca.vgorcinschi.model.Patient;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public interface PatientDBService {
 
-    public boolean addPatient(Patient p);
+    public boolean savePatient(Patient p);
 
     public boolean addDetailRecord(Object detailRecord);
 
