@@ -1,9 +1,11 @@
 package ca.vgorcinschi.dao;
 
+import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.model.Patient;
 import java.time.LocalDateTime;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,9 @@ public class PatientDBServiceTests {
 
     @Autowired
     private PatientDBService service;
+    
+    @Autowired
+    private PatientRepository patientRepository;
 
     //target for tests
     private Patient patient;
@@ -46,5 +51,20 @@ public class PatientDBServiceTests {
     @Test
     public void serviceIsNotNull() {
         assertNotNull(service);
+    }
+    
+    @Test
+    public void insertPatient(){
+        assertTrue(service.savePatient(patient));
+    }
+    
+    @Test
+    public void updatePatient(){
+        String checkName = RandomStringUtils.randomAlphabetic(8);
+        patient.setLastName(checkName);
+        service.savePatient(patient);
+        Patient justInserted = patientRepository.findByLastName(checkName).get(0);
+        justInserted.setLastName("I have just been updated!");
+        assertTrue(service.savePatient(justInserted));
     }
 }
