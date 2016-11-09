@@ -24,7 +24,7 @@ public class PatientDBServiceTests {
 
     @Autowired
     private PatientDBService service;
-    
+
     @Autowired
     private PatientRepository patientRepository;
 
@@ -52,19 +52,19 @@ public class PatientDBServiceTests {
     public void serviceIsNotNull() {
         assertNotNull(service);
     }
-    
+
     @Test
-    public void insertPatient(){
+    public void insertPatient() {
         assertTrue(service.savePatient(patient));
     }
-    
+
     @Test
-    public void updatePatient(){
+    public void updatePatient() {
         String checkName = RandomStringUtils.randomAlphabetic(8);
         patient.setLastName(checkName);
         service.savePatient(patient);
         Patient justInserted = patientRepository.findByLastName(checkName).get(0);
         justInserted.setLastName("I have just been updated!");
-        assertTrue(service.savePatient(justInserted));
+        assertTrue(justInserted.getPatientId() > 0 && service.savePatient(justInserted));
     }
 }
