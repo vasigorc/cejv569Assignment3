@@ -4,9 +4,14 @@ import ca.vgorcinschi.dao.repositories.InpatientRepository;
 import ca.vgorcinschi.dao.repositories.MedicationRepository;
 import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.dao.repositories.SurgicalRepository;
+import ca.vgorcinschi.model.Inpatient;
+import ca.vgorcinschi.model.Medication;
 import ca.vgorcinschi.model.Patient;
+import ca.vgorcinschi.model.Surgical;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -18,6 +23,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Qualifier("jdbc")
 public class PatientDBServiceJDBC implements PatientDBService {
+
+    private final Logger log
+            = LoggerFactory.getLogger(this.getClass().getName());
 
     private final InpatientRepository inpatientRepository;
     private final MedicationRepository medicationRepository;
@@ -43,7 +51,19 @@ public class PatientDBServiceJDBC implements PatientDBService {
 
     @Override
     public boolean addDetailRecord(Object detailRecord) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String simpleName = detailRecord.getClass().getSimpleName();
+        switch (simpleName) {
+            case "Inpatient":
+                return inpatientRepository.add((Inpatient) detailRecord);
+            case "Surgical":
+                return surgicalRepository.add((Surgical) detailRecord);
+            case "Medication":
+                return medicationRepository.add((Medication) detailRecord);
+            default:
+                log.error(detailRecord+" of type "+simpleName+" couldn't be saved "
+                        + "into the DB. No matching type.");
+                return false;
+        }
     }
 
     @Override
