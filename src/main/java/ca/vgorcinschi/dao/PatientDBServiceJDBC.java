@@ -6,6 +6,7 @@ import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.dao.repositories.SurgicalRepository;
 import ca.vgorcinschi.model.Identifiable;
 import ca.vgorcinschi.model.Patient;
+import static java.lang.Integer.valueOf;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,7 +57,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
         //get the detail record's simple class name
         String simpleName = detailRecord.getClass().getSimpleName();
         //if it is not one of the detail records' types log error, return false
-        if (!containsAny(simpleName, "Medication","Inpatient", "Surgical")) {
+        if (!containsAny(simpleName, "Medication", "Inpatient", "Surgical")) {
             log.error("Skipped saving object " + detailRecord + ", class " + simpleName
                     + " is not supported");
             return false;
@@ -64,7 +65,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
         //find out the correct operation
         String action = ((Identifiable) detailRecord).getId() > 0 ? "update" : "add";
         try {
-            return saveDetailByReflection(simpleName, detailRecord, action);
+            return actOnDetailByReflection(simpleName, detailRecord, action);
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException e) {
             log.error("Couldn't save " + detailRecord + ": " + e.getMessage());
             return false;
@@ -73,7 +74,22 @@ public class PatientDBServiceJDBC implements PatientDBService {
 
     @Override
     public boolean deleteDetailRecord(Object detailRecord) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //get the detail record's simple class name
+        String simpleName = detailRecord.getClass().getSimpleName();
+        //if it is not one of the detail records' types log error, return false
+        if (!containsAny(simpleName, "Medication", "Inpatient", "Surgical")) {
+            log.error("Skipped deleting object " + detailRecord + ", class " + simpleName
+                    + " is not supported");
+            return false;
+        }
+        Integer idOfTheRecord = valueOf(((Identifiable) detailRecord).getId());
+        //invoke the method of the correct repository
+        try {
+            return actOnDetailByReflection(simpleName, idOfTheRecord, "delete");
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException e) {
+            log.error("Couldn't delete " + detailRecord + ": " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -112,7 +128,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
      * @throws InvocationTargetException - underlying method throws an exception
      */
     @Override
-    public boolean saveDetailByReflection(String simpleName, Object detailRecord,
+    public boolean actOnDetailByReflection(String simpleName, Object detailRecord,
             String operation)
             throws NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException, NoSuchMethodException,
@@ -125,10 +141,19 @@ public class PatientDBServiceJDBC implements PatientDBService {
         field.setAccessible(true);
         // obtain the field value from the object instance
         Object fieldValue = field.get(this);
-        //obtain the method reference from the field, method name and the parent class
-        Method method = fieldValue.getClass().getDeclaredMethod(operation,
-                Class.forName("ca.vgorcinschi.model." + simpleName));
-        //invoke the method, passing-in the detail record argument as the parameter
+        /**
+         * Depending on argument type: 1. obtain the method reference from the
+         * field, method name, arg type and the parent class 2. invoke the
+         * method, passing-in the right arg
+         */
+        Method method;
+        if (operation.equals("delete")) {
+            method = fieldValue.getClass().getDeclaredMethod(operation,
+                    int.class);
+        } else {
+            method = fieldValue.getClass().getDeclaredMethod(operation,
+                    Class.forName("ca.vgorcinschi.model." + simpleName));
+        }
         return (Boolean) method.invoke(fieldValue, detailRecord);
     }
 }

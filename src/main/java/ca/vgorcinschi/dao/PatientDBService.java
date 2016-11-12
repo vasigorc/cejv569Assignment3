@@ -26,7 +26,7 @@ public interface PatientDBService {
 
     public boolean deletePatient();
 
-    public boolean saveDetailByReflection(String simpleName, Object detailRecord,
+    public boolean actOnDetailByReflection(String simpleName, Object detailRecord,
             String operation)
             throws NoSuchFieldException, IllegalArgumentException,
             IllegalAccessException, NoSuchMethodException,

@@ -1,17 +1,14 @@
 package ca.vgorcinschi.dao;
 
+import ca.vgorcinschi.dao.repositories.MedicationRepository;
 import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.model.Medication;
 import ca.vgorcinschi.model.Patient;
-import java.lang.reflect.InvocationTargetException;
 import static java.math.BigDecimal.valueOf;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang3.RandomStringUtils;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -36,20 +33,34 @@ public class PatientDBServiceTests {
     @Autowired
     private PatientRepository patientRepository;
 
-    //target for tests
+    @Autowired
+    private MedicationRepository medicationRepository;
+
+    //targets for tests
     private Patient patient;
+    private Medication medication;
 
     public PatientDBServiceTests() {
     }
 
     @Before
     public void setUp() {
+        //for patietn
         patient = new Patient();
         patient.setAdmissionDate(LocalDateTime.now().minusMonths(2));
         patient.setReleaseDate(LocalDateTime.now().minusMonths(1));
         patient.setDiagnosis("test diagnosis");
         patient.setFirstName("First");
         patient.setLastName("Last");
+
+        //for medication
+        medication = new Medication();
+        int id = new Random().nextInt((5 - 1) + 1) + 1;
+        medication.setPatientId(id);
+        medication.setDateOfMedication(LocalDateTime.now().minusDays(22));
+        medication.setMed("Medication");
+        medication.setUnitCost(valueOf(15));
+        medication.setUnits(valueOf(5));
     }
 
     @After
@@ -79,32 +90,28 @@ public class PatientDBServiceTests {
 
     @Test
     public void addDetailRecordTest() {
-        //creating a sample detail record
-        Medication medication = new Medication();
-        int id = new Random().nextInt((5 - 1) + 1) + 1;
-        medication.setPatientId(id);
-        medication.setDateOfMedication(LocalDateTime.now().minusDays(22));
-        medication.setMed("Medication");
-        medication.setUnitCost(valueOf(15));
-        medication.setUnits(valueOf(5));
         assertTrue(service.saveDetailRecord(medication));
     }
-    
+
     @Test
-    public void insertByReflectionTest(){
-        try {
-            //creating a sample detail record
-            Medication medication = new Medication();
-            int id = new Random().nextInt((5 - 1) + 1) + 1;
-            medication.setPatientId(id);
-            medication.setDateOfMedication(LocalDateTime.now().minusDays(22));
-            medication.setMed("MedicationReflection");
-            medication.setUnitCost(valueOf(15));
-            medication.setUnits(valueOf(5));
-            assertTrue(service.saveDetailByReflection(Medication.class.getSimpleName(), medication
-            ,"add"));
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException ex) {
-            Logger.getLogger(PatientDBServiceTests.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void updateDetailRecordTest() {
+        //provided there are some medication records for patient # 3
+        Medication aMedication = medicationRepository.getPatientDetails(3).get(0);
+        assert aMedication.getId() > 0;
+        aMedication.setUnitCost(valueOf(23));
+        assertTrue(service.saveDetailRecord(aMedication));
+    }
+
+    @Test
+    public void deleteDetailRecordTest() {
+        /**
+         * test only worked for me because this select count(ID), PATIENTID from
+         * HOSPITALDB.MEDICATION group by PATIENTID; returned 9 for patient # 4.
+         * Switch the number to fit your figures.
+         */
+        List<Medication> meds = medicationRepository.getPatientDetails(4);
+        //if we don't have a marge - skip the test
+        org.junit.Assume.assumeTrue(meds.size() > 2);
+        assertTrue(service.deleteDetailRecord(meds.get(0)));
     }
 }
