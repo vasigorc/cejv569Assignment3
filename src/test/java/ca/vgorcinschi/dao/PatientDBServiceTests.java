@@ -9,6 +9,7 @@ import static java.math.BigDecimal.valueOf;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
@@ -29,23 +30,23 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PatientDBServiceTests {
-    
+
     @Autowired
     private PatientDBService service;
-    
+
     @Autowired
     private PatientRepository patientRepository;
-    
+
     @Autowired
     private MedicationRepository medicationRepository;
 
     //targets for tests
     private Patient patient;
     private Medication medication;
-    
+
     public PatientDBServiceTests() {
     }
-    
+
     @Before
     public void setUp() {
         //for patietn
@@ -65,21 +66,21 @@ public class PatientDBServiceTests {
         medication.setUnitCost(valueOf(15));
         medication.setUnits(valueOf(5));
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Test
     public void serviceIsNotNull() {
         assertNotNull(service);
     }
-    
+
     @Test
     public void insertPatientTest() {
         assertTrue(service.savePatient(patient));
     }
-    
+
     @Test
     public void updatePatientTest() {
         //generating a "custom" random last name to retrieve it back
@@ -90,12 +91,12 @@ public class PatientDBServiceTests {
         justInserted.setLastName("I have just been updated!");
         assertTrue(justInserted.getPatientId() > 0 && service.savePatient(justInserted));
     }
-    
+
     @Test
     public void addDetailRecordTest() {
         assertTrue(service.saveDetailRecord(medication));
     }
-    
+
     @Test
     public void updateDetailRecordTest() {
         //provided there are some medication records for patient # 3
@@ -104,7 +105,7 @@ public class PatientDBServiceTests {
         aMedication.setUnitCost(valueOf(23));
         assertTrue(service.saveDetailRecord(aMedication));
     }
-    
+
     @Test
     @Ignore
     public void deleteDetailRecordTest() {
@@ -118,13 +119,13 @@ public class PatientDBServiceTests {
         org.junit.Assume.assumeTrue(meds.size() > 2);
         assertTrue(service.deleteDetailRecord(meds.get(0)));
     }
-    
+
     @Test
     public void getPatientByIdTest() {
         //we would expect at least one patient to be in the db
         assertTrue(service.findById(1).isPresent());
     }
-    
+
     @Test
     public void retrievedMainRecHasChildren() {
         //list of lists :-) of detail record
@@ -143,5 +144,19 @@ public class PatientDBServiceTests {
         listOfDetailRecords.add((List<Identifiable>) (List<?>) p.getSurgicals());
         //test -> at least one list is not empty
         assertTrue(listOfDetailRecords.stream().anyMatch(list -> list.size() > 0));
+    }
+
+    @Test
+    public void findPatientByNameTest() {
+        //we will re-use the same patient # 1
+        assertTrue(service.findByName("Wayne").isPresent());
+    }
+
+    @Test
+    public void findAllPatients() {
+        Optional<List<Patient>> optional = service.allPatients();
+        org.junit.Assume.assumeTrue(optional.isPresent() && !optional.get().isEmpty());
+        //more then one patient in the DB
+        assertTrue(optional.get().size() > 1);
     }
 }

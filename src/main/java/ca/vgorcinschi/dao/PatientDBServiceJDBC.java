@@ -27,15 +27,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Qualifier("jdbc")
 public class PatientDBServiceJDBC implements PatientDBService {
-
+    
     private final Logger log
             = LoggerFactory.getLogger(this.getClass().getName());
-
+    
     private final InpatientRepository inpatientRepository;
     private final MedicationRepository medicationRepository;
     private final SurgicalRepository surgicalRepository;
     private final PatientRepository patientRepository;
-
+    
     @Autowired
     public PatientDBServiceJDBC(InpatientRepository inpatientRepository, MedicationRepository medicationRepository, SurgicalRepository surgicalRepository, PatientRepository patientRepository) {
         this.inpatientRepository = inpatientRepository;
@@ -43,7 +43,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
         this.surgicalRepository = surgicalRepository;
         this.patientRepository = patientRepository;
     }
-
+    
     @Override
     public boolean savePatient(Patient p) {
         if (p.getPatientId() > 0) {//meaning it's an update
@@ -52,7 +52,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
             return patientRepository.add(p);
         }
     }
-
+    
     @Override
     public boolean saveDetailRecord(Object detailRecord) {
         //get the detail record's simple class name
@@ -72,7 +72,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
             return false;
         }
     }
-
+    
     @Override
     public boolean deleteDetailRecord(Object detailRecord) {
         //get the detail record's simple class name
@@ -92,7 +92,7 @@ public class PatientDBServiceJDBC implements PatientDBService {
             return false;
         }
     }
-
+    
     @Override
     public Optional<Patient> findById(int id) {
         Optional<Patient> patient = ofNullable(patientRepository.findById(id));
@@ -103,18 +103,31 @@ public class PatientDBServiceJDBC implements PatientDBService {
         }
         return patient;
     }
-
+    
     @Override
     public Optional<List<Patient>> findByName(String lastName) {
         Optional<List<Patient>> optional = ofNullable(patientRepository.findByLastName(lastName));
-        return null;
+        //if the returned list is not empty...
+        if (optional.isPresent() && !optional.get().isEmpty()) {
+            List<Patient> patients = optional.get();
+            patients.stream().map((p) -> {
+                p.getInpatients().addAll(inpatientRepository.getPatientDetails(p.getPatientId()));
+                return p;
+            }).map((p) -> {
+                p.getSurgicals().addAll(surgicalRepository.getPatientDetails(p.getPatientId()));
+                return p;
+            }).forEach((p) -> {
+                p.getMedications().addAll(medicationRepository.getPatientDetails(p.getPatientId()));
+            });
+        }
+        return optional;
     }
-
+    
     @Override
     public Optional<List<Patient>> allPatients() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return ofNullable(patientRepository.getAll());
     }
-
+    
     @Override
     public boolean deletePatient() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
