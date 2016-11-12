@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -60,9 +61,14 @@ public class PatientRepositoryJDBC implements PatientRepository {
      * row
      */
     @Override
-    public Patient findById(int patientId) throws DataAccessException, IncorrectResultSizeDataAccessException {
+    public Patient findById(int patientId) throws DataAccessException, 
+            IncorrectResultSizeDataAccessException, EmptyResultDataAccessException {
         //appending the condition to the general query
         String byId = generalSelect + " WHERE PATIENTID = ?";
+        try {
+            
+        } catch (EmptyResultDataAccessException e) {
+        }
         return jdbcTemplate.queryForObject(byId, (rs, rowCount) -> {
             //Patient object to be filled
             Patient candidate = new Patient();

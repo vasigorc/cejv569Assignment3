@@ -24,7 +24,7 @@ public interface PatientDBService {
 
     public Optional<List<Patient>> allPatients();
 
-    public boolean deletePatient();
+    public boolean deletePatient(int id);
 
     public boolean actOnDetailByReflection(String simpleName, Object detailRecord,
             String operation)

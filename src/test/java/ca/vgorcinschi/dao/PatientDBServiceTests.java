@@ -159,4 +159,20 @@ public class PatientDBServiceTests {
         //more then one patient in the DB
         assertTrue(optional.get().size() > 1);
     }
+
+    @Test
+    public void deletePatientTest() {
+        //generating a "custom" random last name to retrieve it back
+        String checkName = RandomStringUtils.randomAlphabetic(8);
+        patient.setLastName(checkName);
+        //save this patient
+        service.savePatient(patient);
+        Patient p = service.findByName(checkName).get().get(0);
+        assertTrue(service.deletePatient(p.getPatientId()));
+    }
+
+    @Test
+    public void findPatientByWrongIdTest() {
+        assertFalse(service.findById(1000000).isPresent());
+    }
 }
