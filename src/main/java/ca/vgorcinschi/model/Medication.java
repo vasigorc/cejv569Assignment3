@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author vgorcinschi
  */
-public class Medication implements Serializable{
+public class Medication implements Serializable, Identifiable{
 
     //primary key
     private int id;
@@ -42,6 +42,7 @@ public class Medication implements Serializable{
         this.units = units;
     }
 
+    @Override
     public int getId() {
         return id;
     }

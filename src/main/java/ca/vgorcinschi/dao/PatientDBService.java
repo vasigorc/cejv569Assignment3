@@ -1,6 +1,7 @@
 package ca.vgorcinschi.dao;
 
 import ca.vgorcinschi.model.Patient;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +14,7 @@ public interface PatientDBService {
 
     public boolean savePatient(Patient p);
 
-    public boolean addDetailRecord(Object detailRecord);
-
-    public boolean updateDetailRecord(Object detailRecord);
+    public boolean saveDetailRecord(Object detailRecord);
 
     public boolean deleteDetailRecord(Object detailRecord);
 
@@ -26,4 +25,10 @@ public interface PatientDBService {
     public Optional<List<Patient>> allPatients();
 
     public boolean deletePatient();
+
+    public boolean saveDetailByReflection(String simpleName, Object detailRecord,
+            String operation)
+            throws NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, NoSuchMethodException,
+            ClassNotFoundException, InvocationTargetException;
 }

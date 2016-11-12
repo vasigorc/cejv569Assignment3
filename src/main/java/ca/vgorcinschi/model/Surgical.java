@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author vgorcinschi
  */
-public class Surgical implements Serializable{
+public class Surgical implements Serializable, Identifiable{
 
     //primary key
     private int id;
@@ -43,6 +43,7 @@ public class Surgical implements Serializable{
         this.supplies = supplies;
     }
 
+    @Override
     public int getId() {
         return id;
     }

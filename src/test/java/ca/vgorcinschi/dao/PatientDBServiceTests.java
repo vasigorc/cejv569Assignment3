@@ -3,10 +3,15 @@ package ca.vgorcinschi.dao;
 import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.model.Medication;
 import ca.vgorcinschi.model.Patient;
+import java.lang.reflect.InvocationTargetException;
 import static java.math.BigDecimal.valueOf;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang3.RandomStringUtils;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -82,6 +87,24 @@ public class PatientDBServiceTests {
         medication.setMed("Medication");
         medication.setUnitCost(valueOf(15));
         medication.setUnits(valueOf(5));
-        assertTrue(service.addDetailRecord(medication));
+        assertTrue(service.saveDetailRecord(medication));
+    }
+    
+    @Test
+    public void insertByReflectionTest(){
+        try {
+            //creating a sample detail record
+            Medication medication = new Medication();
+            int id = new Random().nextInt((5 - 1) + 1) + 1;
+            medication.setPatientId(id);
+            medication.setDateOfMedication(LocalDateTime.now().minusDays(22));
+            medication.setMed("MedicationReflection");
+            medication.setUnitCost(valueOf(15));
+            medication.setUnits(valueOf(5));
+            assertTrue(service.saveDetailByReflection(Medication.class.getSimpleName(), medication
+            ,"add"));
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException ex) {
+            Logger.getLogger(PatientDBServiceTests.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

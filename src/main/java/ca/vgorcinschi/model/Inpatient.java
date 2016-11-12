@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author vgorcinschi
  */
-public class Inpatient implements Serializable{
+public class Inpatient implements Serializable, Identifiable{
 
     //primary key
     private int id;
@@ -42,6 +42,7 @@ public class Inpatient implements Serializable{
         this.services = services;
     }
 
+    @Override
     public int getId() {
         return id;
     }

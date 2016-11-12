@@ -4,12 +4,14 @@ import ca.vgorcinschi.dao.repositories.InpatientRepository;
 import ca.vgorcinschi.dao.repositories.MedicationRepository;
 import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.dao.repositories.SurgicalRepository;
-import ca.vgorcinschi.model.Inpatient;
-import ca.vgorcinschi.model.Medication;
+import ca.vgorcinschi.model.Identifiable;
 import ca.vgorcinschi.model.Patient;
-import ca.vgorcinschi.model.Surgical;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
+import static org.apache.commons.lang3.StringUtils.containsAny;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,25 +52,23 @@ public class PatientDBServiceJDBC implements PatientDBService {
     }
 
     @Override
-    public boolean addDetailRecord(Object detailRecord) {
+    public boolean saveDetailRecord(Object detailRecord) {
+        //get the detail record's simple class name
         String simpleName = detailRecord.getClass().getSimpleName();
-        switch (simpleName) {
-            case "Inpatient":
-                return inpatientRepository.add((Inpatient) detailRecord);
-            case "Surgical":
-                return surgicalRepository.add((Surgical) detailRecord);
-            case "Medication":
-                return medicationRepository.add((Medication) detailRecord);
-            default:
-                log.error(detailRecord+" of type "+simpleName+" couldn't be saved "
-                        + "into the DB. No matching type.");
-                return false;
+        //if it is not one of the detail records' types log error, return false
+        if (!containsAny(simpleName, "Medication","Inpatient", "Surgical")) {
+            log.error("Skipped saving object " + detailRecord + ", class " + simpleName
+                    + " is not supported");
+            return false;
         }
-    }
-
-    @Override
-    public boolean updateDetailRecord(Object detailRecord) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //find out the correct operation
+        String action = ((Identifiable) detailRecord).getId() > 0 ? "update" : "add";
+        try {
+            return saveDetailByReflection(simpleName, detailRecord, action);
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException e) {
+            log.error("Couldn't save " + detailRecord + ": " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -96,4 +96,39 @@ public class PatientDBServiceJDBC implements PatientDBService {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * this method should detect the right repository bean and invoke the
+     * correct method on it
+     *
+     * @param simpleName - type of the detail record (String)
+     * @param detailRecord - the detail record
+     * @param operation - "add" or "update"
+     * @return did we succeed in saving the record
+     * @throws NoSuchFieldException - bean field not discovered
+     * @throws IllegalArgumentException - incorrect field arguments passed-in
+     * @throws IllegalAccessException - field not discovered
+     * @throws NoSuchMethodException - field method doesn't exist
+     * @throws ClassNotFoundException - model class couldn't be discovered
+     * @throws InvocationTargetException - underlying method throws an exception
+     */
+    @Override
+    public boolean saveDetailByReflection(String simpleName, Object detailRecord,
+            String operation)
+            throws NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException, NoSuchMethodException,
+            ClassNotFoundException, InvocationTargetException {
+        //lowercase the class name to find the bean reference by name
+        String lowerCased = simpleName.substring(0, 1).toLowerCase()
+                + simpleName.substring(1);
+        // get the field definition & make it accessible
+        Field field = this.getClass().getDeclaredField(lowerCased + "Repository");
+        field.setAccessible(true);
+        // obtain the field value from the object instance
+        Object fieldValue = field.get(this);
+        //obtain the method reference from the field, method name and the parent class
+        Method method = fieldValue.getClass().getDeclaredMethod(operation,
+                Class.forName("ca.vgorcinschi.model." + simpleName));
+        //invoke the method, passing-in the detail record argument as the parameter
+        return (Boolean) method.invoke(fieldValue, detailRecord);
+    }
 }
