@@ -20,7 +20,7 @@ public interface PatientDBService {
 
     public Optional<Patient> findById(int id);
 
-    public Optional<List<Patient>> findByName();
+    public Optional<List<Patient>> findByName(String lastName);
 
     public Optional<List<Patient>> allPatients();
 

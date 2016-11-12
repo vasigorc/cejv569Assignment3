@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.containsAny;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,12 +95,19 @@ public class PatientDBServiceJDBC implements PatientDBService {
 
     @Override
     public Optional<Patient> findById(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Optional<Patient> patient = ofNullable(patientRepository.findById(id));
+        if (patient.isPresent()) {
+            patient.get().getInpatients().addAll(inpatientRepository.getPatientDetails(id));
+            patient.get().getMedications().addAll(medicationRepository.getPatientDetails(id));
+            patient.get().getSurgicals().addAll(surgicalRepository.getPatientDetails(id));
+        }
+        return patient;
     }
 
     @Override
-    public Optional<List<Patient>> findByName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Optional<List<Patient>> findByName(String lastName) {
+        Optional<List<Patient>> optional = ofNullable(patientRepository.findByLastName(lastName));
+        return null;
     }
 
     @Override
