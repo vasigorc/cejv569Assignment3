@@ -9,4 +9,14 @@ spring:
         url: jdbc:mysql://localhost:3306/HOSPITALDB
         username: vgorcinschi
         password: Flag-Salary-Inward-Least-1
+    jmx:
+        enabled: false
+logging:
+    level: INFO
+    org:
+        springframework: 
+            test: WARN
+app:
+    ui:
+        title: Patients Management
         
