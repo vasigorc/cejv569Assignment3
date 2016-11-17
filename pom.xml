@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ca.vgorcinschi</groupId>
-	<artifactId>patient-db</artifactId>
+	<artifactId>AssignmentThree</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>patient-db</name>
+	<name>AssignmentThree</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
