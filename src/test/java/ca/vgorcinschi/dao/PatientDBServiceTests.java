@@ -1,19 +1,13 @@
 package ca.vgorcinschi.dao;
 
+import ca.vgorcinschi.IntegrationTestConfig;
 import ca.vgorcinschi.dao.repositories.MedicationRepository;
 import ca.vgorcinschi.dao.repositories.PatientRepository;
 import ca.vgorcinschi.model.Identifiable;
 import ca.vgorcinschi.model.Medication;
 import ca.vgorcinschi.model.Patient;
-import static java.math.BigDecimal.valueOf;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,13 +16,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+
+import static java.math.BigDecimal.valueOf;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Test class to test the jdbc implementation for PatientDBService
  *
  * @author vgorcinschi
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = IntegrationTestConfig.class)
 public class PatientDBServiceTests {
 
     @Autowired

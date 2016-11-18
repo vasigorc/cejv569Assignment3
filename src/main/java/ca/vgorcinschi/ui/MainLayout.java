@@ -16,7 +16,6 @@
 package ca.vgorcinschi.ui;
 
 import javafx.scene.layout.GridPane;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,22 +25,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class MainLayout extends GridPane {
 
-	private final HelloWorldComponent helloWorldComponent;
+    private final HelloWorldComponent helloWorldComponent;
 
-	private final SinChartComponent sinChartComponent;
+    private final SinChartComponent sinChartComponent;
 
-	@Autowired
-	public MainLayout(HelloWorldComponent helloWorldComponent, SinChartComponent sinChartComponent) {
+    @Autowired
+    public MainLayout(HelloWorldComponent helloWorldComponent, SinChartComponent sinChartComponent) {
 
-		this.helloWorldComponent = helloWorldComponent;
-		this.sinChartComponent = sinChartComponent;
+        this.helloWorldComponent = helloWorldComponent;
+        this.sinChartComponent = sinChartComponent;
 
-		initComponent();
-	}
+        initComponent();
+    }
 
-	private void initComponent() {
+    private void initComponent() {
 
-		add(this.helloWorldComponent, 0, 0);
-		add(this.sinChartComponent, 0, 1);
-	}
+        add(this.helloWorldComponent, 0, 0);
+        add(this.sinChartComponent, 0, 1);
+    }
 }

@@ -6,32 +6,30 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Lazy;
 
 @SpringBootApplication
-@Lazy
-public class App extends AbstractJavaFxApplicationSupport{
+public class App extends AbstractJavaFxApplicationSupport {
 
-	/**
-	 * Note that this is configured in application.properties
-	 */
-	@Value("${app.ui.title:Example App}")//
-	private String windowTitle;
-        
-        @Autowired//
-	private MainLayout mainLayout;
+    /**
+     * Note that this is configured in application.properties
+     */
+    @Value("${app.ui.title:Example App}")//
+    private String windowTitle;
 
-	@Override
-	public void start(Stage stage) throws Exception {
+    @Autowired//
+    private MainLayout mainLayout;
 
-		stage.setTitle(windowTitle);
-		stage.setScene(new Scene(mainLayout));
-		stage.setResizable(true);
-		stage.centerOnScreen();
-		stage.show();
-	}
+    @Override
+    public void start(Stage stage) throws Exception {
 
-	public static void main(String[] args) {
-		launchApp(App.class, args);
-	}
+        stage.setTitle(windowTitle);
+        stage.setScene(new Scene(mainLayout));
+        stage.setResizable(true);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launchApp(App.class, args);
+    }
 }
