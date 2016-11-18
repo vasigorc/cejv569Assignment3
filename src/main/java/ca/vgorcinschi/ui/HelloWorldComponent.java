@@ -17,7 +17,6 @@ package ca.vgorcinschi.ui;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelloWorldComponent extends HBox {
 
-	public HelloWorldComponent() {
-		getChildren().add(new Label("Hello World"));
-	}
+    public HelloWorldComponent() {
+        getChildren().add(new Label("Hello World"));
+    }
 }
