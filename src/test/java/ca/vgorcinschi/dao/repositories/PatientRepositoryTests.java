@@ -5,6 +5,7 @@
  */
 package ca.vgorcinschi.dao.repositories;
 
+import ca.vgorcinschi.IntegrationTestConfig;
 import ca.vgorcinschi.model.Patient;
 import java.time.LocalDateTime;
 import org.junit.After;
@@ -25,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author vgorcinschi
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = IntegrationTestConfig.class)
 public class PatientRepositoryTests {
 
     //this test class' logger

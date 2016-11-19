@@ -1,6 +1,5 @@
 package ca.vgorcinschi;
 
-import javafx.application.Application;
 import javafx.embed.swing.JFXPanel;
 import org.junit.BeforeClass;
 import org.junit.Rule;
