@@ -1,6 +1,6 @@
 package ca.vgorcinschi;
 
-import ca.vgorcinschi.controller.MainLayout;
+import ca.vgorcinschi.controller.MainController;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ public class App extends AbstractJavaFxApplicationSupport {
     private String windowTitle;
 
     @Autowired//
-    private MainLayout mainLayout;
+    private MainController mainController;
 
     @Override
     public void start(Stage stage) throws Exception {
 
         stage.setTitle(windowTitle);
-        stage.setScene(new Scene(mainLayout));
+        stage.setScene(new Scene(mainController));
         stage.setResizable(true);
         stage.centerOnScreen();
         stage.show();

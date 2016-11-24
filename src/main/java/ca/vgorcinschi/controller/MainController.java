@@ -1,23 +1,38 @@
 package ca.vgorcinschi.controller;
 
-
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
+import javafx.scene.control.TabPane;
+import org.springframework.stereotype.Component;
 
 /**
  * FXML Controller class
  *
  * @author vgorcinschi
  */
-public class MainController implements Initializable {
-
+@Component
+public class MainController extends TabPane implements TabMediator {
+    
+    @FXML private PatientTabController patientTabController;
+    @FXML private InpatientTabController inpatientTabController;
+    @FXML private MedicationTabController medicationTabController;
+    @FXML private SurgicalTabController surgicalTabController;
     /**
      * Initializes the controller class.
      */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    @FXML private void initialize() {
         // TODO
     }    
-    
+
+    @Override
+    public void updatePatient() {
+        inpatientTabController.setCurrentPatient(patientTabController.getCurrentPatient());
+        medicationTabController.setCurrentPatient(patientTabController.getCurrentPatient());
+        surgicalTabController.setCurrentPatient(patientTabController.getCurrentPatient());
+    }
+
+    @Override
+    public void reloadPatient() {
+        patientTabController.getService().savePatient(patientTabController.getCurrentPatient());
+        updatePatient();
+    }    
 }

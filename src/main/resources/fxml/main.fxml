@@ -1,16 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" 
-            styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" 
+            styleClass="mainFxmlClass" 
+            xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65" 
             fx:controller="ca.vgorcinschi.controller.MainController">
     <stylesheets>
-        <URL value="@/styles/main.css"/>
+        <URL value="@/styles/main.css" />
     </stylesheets>
+    <children>
+        <TabPane prefHeight="400.0" prefWidth="600.0"  tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Patient">
+                    <content>
+                        <fx:include fx:id="patientTab" source="PatientTab.fxml" />
+                    </content>
+                </Tab>
+                <Tab text="Inpatient">
+                    <content>
+                        <fx:include fx:id="inpatientTab" source="InpatientTab.fxml" />
+                    </content>
+                </Tab>
+                <Tab text="Medication">
+                    <content>
+                        <fx:include fx:id="medicationTab" source="MedicationTab.fxml" />
+                    </content>
+                </Tab>
+                <Tab text="Surgical">
+                    <content>
+                        <fx:include fx:id="surgicalTab" source="SurgicalTab.fxml" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
 </AnchorPane>
