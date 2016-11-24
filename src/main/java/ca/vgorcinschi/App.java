@@ -1,6 +1,6 @@
 package ca.vgorcinschi;
 
-import ca.vgorcinschi.ui.MainLayout;
+import ca.vgorcinschi.controller.MainLayout;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
