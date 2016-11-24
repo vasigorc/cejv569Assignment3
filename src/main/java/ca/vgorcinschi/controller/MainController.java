@@ -1,7 +1,6 @@
 package ca.vgorcinschi.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TabPane;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component;
  * @author vgorcinschi
  */
 @Component
-public class MainController extends TabPane implements TabMediator {
+public class MainController implements TabMediator {
     
     @FXML private PatientTabController patientTabController;
     @FXML private InpatientTabController inpatientTabController;

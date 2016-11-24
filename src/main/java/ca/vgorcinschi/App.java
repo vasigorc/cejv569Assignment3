@@ -1,6 +1,8 @@
 package ca.vgorcinschi;
 
 import ca.vgorcinschi.controller.MainController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,10 @@ public class App extends AbstractJavaFxApplicationSupport {
     public void start(Stage stage) throws Exception {
 
         stage.setTitle(windowTitle);
-        stage.setScene(new Scene(mainController));
+        FXMLLoader myLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        Parent loadScreen = (Parent) myLoader.load();
+
+        stage.setScene(new Scene(loadScreen));
         stage.setResizable(true);
         stage.centerOnScreen();
         stage.show();
