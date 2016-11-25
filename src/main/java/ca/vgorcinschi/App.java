@@ -1,11 +1,9 @@
 package ca.vgorcinschi;
 
-import ca.vgorcinschi.controller.MainController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -18,9 +16,6 @@ public class App extends AbstractJavaFxApplicationSupport {
     @Value("${app.ui.title:Example App}")//
     private String windowTitle;
 
-    @Autowired//
-    private MainController mainController;
-
     @Override
     public void start(Stage stage) throws Exception {
 
@@ -29,6 +24,8 @@ public class App extends AbstractJavaFxApplicationSupport {
         Parent loadScreen = (Parent) myLoader.load();
 
         stage.setScene(new Scene(loadScreen));
+        //make the stage to feet your screen
+        stage.setMaximized(true);
         stage.setResizable(true);
         stage.centerOnScreen();
         stage.show();
