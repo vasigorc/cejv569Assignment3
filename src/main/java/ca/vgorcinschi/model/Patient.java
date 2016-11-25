@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *this is the master record, db table PATIENT
@@ -15,7 +17,7 @@ public class Patient implements Serializable{
     //primary key
     private int patientId;
     //columns: "LASTNAME", "FIRSTNAME", "DIAGNOSIS"
-    private String lastName, firstName, diagnosis;
+    private SimpleStringProperty lastName, firstName, diagnosis;
     //columns: "ADMISSIONDATE", "RELEASEDATE"
     private LocalDateTime admissionDate, releaseDate;
     //one-to-many with Inpatient
@@ -33,6 +35,9 @@ public class Patient implements Serializable{
         inpatients = new ArrayList<>();
         medications = new ArrayList<>();
         surgicals = new ArrayList<>();
+        this.lastName = new SimpleStringProperty();
+        this.firstName = new SimpleStringProperty();
+        this.diagnosis = new SimpleStringProperty();
     }
 
     /*
@@ -43,9 +48,9 @@ public class Patient implements Serializable{
         //call the default constructor first
         this();
         this.patientId = patientId;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.diagnosis = diagnosis;
+        this.lastName = new SimpleStringProperty(lastName);
+        this.firstName = new SimpleStringProperty(firstName);
+        this.diagnosis = new SimpleStringProperty(diagnosis);
         this.admissionDate = admissionDate;
         this.releaseDate = releaseDate;
     }
@@ -60,29 +65,41 @@ public class Patient implements Serializable{
     }
 
     public String getLastName() {
-        return lastName;
+        return lastName.get();
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.lastName.set(lastName);
+    }
+    
+    public StringProperty lastNameProperty(){
+        return lastName;
     }
 
     public String getFirstName() {
-        return firstName;
+        return firstName.get();
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.firstName.set(firstName);
     }
 
+    public StringProperty firstNameProperty(){
+        return firstName;
+    }
+    
     public String getDiagnosis() {
-        return diagnosis;
+        return diagnosis.get();
     }
 
     public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
+        this.diagnosis.set(diagnosis);
     }
 
+    public StringProperty diagnosisProperty(){
+        return diagnosis;
+    }
+    
     public LocalDateTime getAdmissionDate() {
         return admissionDate;
     }
@@ -116,9 +133,9 @@ public class Patient implements Serializable{
     public int hashCode() {
         int hash = 7;
         hash = 73 * hash + this.patientId;
-        hash = 73 * hash + Objects.hashCode(this.lastName);
-        hash = 73 * hash + Objects.hashCode(this.firstName);
-        hash = 73 * hash + Objects.hashCode(this.diagnosis);
+        hash = 73 * hash + Objects.hashCode(this.lastName.get());
+        hash = 73 * hash + Objects.hashCode(this.firstName.get());
+        hash = 73 * hash + Objects.hashCode(this.diagnosis.get());
         hash = 73 * hash + Objects.hashCode(this.admissionDate);
         hash = 73 * hash + Objects.hashCode(this.releaseDate);
         hash = 73 * hash + Objects.hashCode(this.inpatients);
@@ -142,13 +159,13 @@ public class Patient implements Serializable{
         if (this.patientId != other.patientId) {
             return false;
         }
-        if (!Objects.equals(this.lastName, other.lastName)) {
+        if (!Objects.equals(this.lastName.get(), other.lastName.get())) {
             return false;
         }
-        if (!Objects.equals(this.firstName, other.firstName)) {
+        if (!Objects.equals(this.firstName.get(), other.firstName.get())) {
             return false;
         }
-        if (!Objects.equals(this.diagnosis, other.diagnosis)) {
+        if (!Objects.equals(this.diagnosis.get(), other.diagnosis.get())) {
             return false;
         }
         if (!Objects.equals(this.admissionDate, other.admissionDate)) {
@@ -168,6 +185,8 @@ public class Patient implements Serializable{
 
     @Override
     public String toString() {
-        return "Patient{" + "patientId=" + patientId + ", lastName=" + lastName + ", firstName=" + firstName + ", diagnosis=" + diagnosis + ", admissionDate=" + admissionDate + ", releaseDate=" + releaseDate + ", inpatients=" + inpatients + ", medications=" + medications + ", surgicals=" + surgicals + '}';
+        return "Patient{" + "patientId=" + patientId + ", lastName=" + lastName.get()
+                + ", firstName=" + firstName.get() + ", diagnosis=" + 
+                diagnosis.get() + ", admissionDate=" + admissionDate + ", releaseDate=" + releaseDate + ", inpatients=" + inpatients + ", medications=" + medications + ", surgicals=" + surgicals + '}';
     }
 }
