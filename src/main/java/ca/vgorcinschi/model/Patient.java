@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -15,11 +19,11 @@ import javafx.beans.property.StringProperty;
  */
 public class Patient implements Serializable{
     //primary key
-    private int patientId;
+    private IntegerProperty patientId;
     //columns: "LASTNAME", "FIRSTNAME", "DIAGNOSIS"
     private SimpleStringProperty lastName, firstName, diagnosis;
     //columns: "ADMISSIONDATE", "RELEASEDATE"
-    private LocalDateTime admissionDate, releaseDate;
+    private ObjectProperty<LocalDateTime> admissionDate, releaseDate;
     //one-to-many with Inpatient
     private List<Inpatient> inpatients;
     //one-to-many with Medication
@@ -32,12 +36,15 @@ public class Patient implements Serializable{
      */
     public Patient() {
         //initialize all lists to avoid NPEs
+        patientId = new SimpleIntegerProperty();
         inpatients = new ArrayList<>();
         medications = new ArrayList<>();
         surgicals = new ArrayList<>();
         this.lastName = new SimpleStringProperty();
         this.firstName = new SimpleStringProperty();
         this.diagnosis = new SimpleStringProperty();
+        this.admissionDate = new SimpleObjectProperty<>();
+        this.releaseDate = new SimpleObjectProperty<>();
     }
 
     /*
@@ -47,75 +54,86 @@ public class Patient implements Serializable{
             String diagnosis, LocalDateTime admissionDate, LocalDateTime releaseDate) {
         //call the default constructor first
         this();
-        this.patientId = patientId;
+        this.patientId = new SimpleIntegerProperty(patientId);
         this.lastName = new SimpleStringProperty(lastName);
         this.firstName = new SimpleStringProperty(firstName);
         this.diagnosis = new SimpleStringProperty(diagnosis);
-        this.admissionDate = admissionDate;
-        this.releaseDate = releaseDate;
+        this.admissionDate = new SimpleObjectProperty<>(admissionDate);
+        this.releaseDate = new SimpleObjectProperty<>(releaseDate);
     }
 
     //getters and setters
-    public int getPatientId() {
+    public final int getPatientId() {
+        return patientId.get();
+    }
+
+    public final void setPatientId(int patientId) {
+        this.patientId.set(patientId);
+    }
+    
+    public final IntegerProperty patientIdProperty(){
         return patientId;
     }
 
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
-    }
-
-    public String getLastName() {
+    public final String getLastName() {
         return lastName.get();
     }
 
-    public void setLastName(String lastName) {
+    public final void setLastName(String lastName) {
         this.lastName.set(lastName);
     }
     
-    public StringProperty lastNameProperty(){
+    public final StringProperty lastNameProperty(){
         return lastName;
     }
 
-    public String getFirstName() {
+    public final String getFirstName() {
         return firstName.get();
     }
 
-    public void setFirstName(String firstName) {
+    public final void setFirstName(String firstName) {
         this.firstName.set(firstName);
     }
 
-    public StringProperty firstNameProperty(){
+    public final StringProperty firstNameProperty(){
         return firstName;
     }
     
-    public String getDiagnosis() {
+    public final String getDiagnosis() {
         return diagnosis.get();
     }
 
-    public void setDiagnosis(String diagnosis) {
+    public final void setDiagnosis(String diagnosis) {
         this.diagnosis.set(diagnosis);
     }
 
-    public StringProperty diagnosisProperty(){
+    public final StringProperty diagnosisProperty(){
         return diagnosis;
     }
     
-    public LocalDateTime getAdmissionDate() {
+    public final LocalDateTime getAdmissionDate() {
+        return admissionDate.get();
+    }
+
+    public final void setAdmissionDate(LocalDateTime admissionDate) {
+        this.admissionDate.set(admissionDate);
+    }
+    
+    public final ObjectProperty<LocalDateTime> admissionDateProperty(){
         return admissionDate;
     }
 
-    public void setAdmissionDate(LocalDateTime admissionDate) {
-        this.admissionDate = admissionDate;
+    public final LocalDateTime getReleaseDate() {
+        return releaseDate.get();
     }
 
-    public LocalDateTime getReleaseDate() {
+    public final void setReleaseDate(LocalDateTime releaseDate) {
+        this.releaseDate.set(releaseDate);
+    }
+
+    public final ObjectProperty<LocalDateTime> releaseDateProperty(){
         return releaseDate;
     }
-
-    public void setReleaseDate(LocalDateTime releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
     //only getters, no setters for children lists
     public List<Inpatient> getInpatients() {
         return inpatients;
@@ -132,12 +150,12 @@ public class Patient implements Serializable{
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 73 * hash + this.patientId;
+        hash = 73 * hash + this.patientId.get();
         hash = 73 * hash + Objects.hashCode(this.lastName.get());
         hash = 73 * hash + Objects.hashCode(this.firstName.get());
         hash = 73 * hash + Objects.hashCode(this.diagnosis.get());
-        hash = 73 * hash + Objects.hashCode(this.admissionDate);
-        hash = 73 * hash + Objects.hashCode(this.releaseDate);
+        hash = 73 * hash + Objects.hashCode(this.admissionDate.get());
+        hash = 73 * hash + Objects.hashCode(this.releaseDate.get());
         hash = 73 * hash + Objects.hashCode(this.inpatients);
         hash = 73 * hash + Objects.hashCode(this.medications);
         hash = 73 * hash + Objects.hashCode(this.surgicals);
@@ -156,7 +174,7 @@ public class Patient implements Serializable{
             return false;
         }
         final Patient other = (Patient) obj;
-        if (this.patientId != other.patientId) {
+        if (this.patientId.get() != other.patientId.get()) {
             return false;
         }
         if (!Objects.equals(this.lastName.get(), other.lastName.get())) {
@@ -168,10 +186,10 @@ public class Patient implements Serializable{
         if (!Objects.equals(this.diagnosis.get(), other.diagnosis.get())) {
             return false;
         }
-        if (!Objects.equals(this.admissionDate, other.admissionDate)) {
+        if (!Objects.equals(this.admissionDate.get(), other.admissionDate.get())) {
             return false;
         }
-        if (!Objects.equals(this.releaseDate, other.releaseDate)) {
+        if (!Objects.equals(this.releaseDate.get(), other.releaseDate.get())) {
             return false;
         }
         if (!Objects.equals(this.inpatients, other.inpatients)) {
@@ -185,8 +203,10 @@ public class Patient implements Serializable{
 
     @Override
     public String toString() {
-        return "Patient{" + "patientId=" + patientId + ", lastName=" + lastName.get()
+        return "Patient{" + "patientId=" + patientId.get()+ ", lastName=" + lastName.get()
                 + ", firstName=" + firstName.get() + ", diagnosis=" + 
-                diagnosis.get() + ", admissionDate=" + admissionDate + ", releaseDate=" + releaseDate + ", inpatients=" + inpatients + ", medications=" + medications + ", surgicals=" + surgicals + '}';
+                diagnosis.get() + ", admissionDate=" + admissionDate.get() 
+                + ", releaseDate=" + releaseDate.get() + ", inpatients=" + 
+                inpatients + ", medications=" + medications + ", surgicals=" + surgicals + '}';
     }
 }
