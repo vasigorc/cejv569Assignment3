@@ -4,112 +4,153 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * this is a detail record for the Patient class, db table SURGICAL
  *
  * @author vgorcinschi
  */
-public class Surgical implements Serializable, Identifiable{
+public class Surgical implements Serializable, Identifiable {
 
     //primary key
-    private int id;
+    private IntegerProperty id;
     //foreign key
-    private int patientId;
+    private IntegerProperty patientId;
     //db column "DATEOFSURGERY", we will convert to Timestamp when talking to db
-    private LocalDateTime dateOfSurgery;
+    private ObjectProperty<LocalDateTime> dateOfSurgery;
     //column "SURGERY"
-    private String surgery;
+    private StringProperty surgery;
     //columns: "ROOMFEE", "SURGEONFEE", "SUPPLIES"
-    private BigDecimal roomFee, surgeonFee, supplies;
+    private ObjectProperty<BigDecimal> roomFee, surgeonFee, supplies;
 
     /**
      * no-args constructor
      */
     public Surgical() {
+        id = new SimpleIntegerProperty();
+        patientId = new SimpleIntegerProperty();
+        dateOfSurgery = new SimpleObjectProperty<>();
+        surgery = new SimpleStringProperty();
+        roomFee = new SimpleObjectProperty<>();
+        surgeonFee = new SimpleObjectProperty<>();
+        supplies = new SimpleObjectProperty<>();
     }
 
     /*
      constructor that initializes all fields;
      */
-    public Surgical(int id, int patientId, LocalDateTime dateOfSurgery, String surgery, 
+    public Surgical(int id, int patientId, LocalDateTime dateOfSurgery, String surgery,
             BigDecimal roomFee, BigDecimal surgeonFee, BigDecimal supplies) {
-        this.id = id;
-        this.patientId = patientId;
-        this.dateOfSurgery = dateOfSurgery;
-        this.surgery = surgery;
-        this.roomFee = roomFee;
-        this.surgeonFee = surgeonFee;
-        this.supplies = supplies;
+        this.id = new SimpleIntegerProperty(id);
+        this.patientId = new SimpleIntegerProperty(patientId);
+        this.dateOfSurgery = new SimpleObjectProperty<>(dateOfSurgery);
+        this.surgery = new SimpleStringProperty(surgery);
+        this.roomFee = new SimpleObjectProperty<>(roomFee);
+        this.surgeonFee = new SimpleObjectProperty<>(surgeonFee);
+        this.supplies = new SimpleObjectProperty<>(supplies);
     }
 
     @Override
-    public int getId() {
+    public final int getId() {
+        return id.get();
+    }
+
+    public final void setId(int id) {
+        this.id.set(id);
+    }
+
+    public final IntegerProperty idProperty() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public final int getPatientId() {
+        return patientId.get();
     }
 
-    public int getPatientId() {
+    public final void setPatientId(int patientId) {
+        this.patientId.set(patientId);
+    }
+
+    public final IntegerProperty patientIdProperty() {
         return patientId;
     }
 
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
+    public final LocalDateTime getDateOfSurgery() {
+        return dateOfSurgery.get();
     }
 
-    public LocalDateTime getDateOfSurgery() {
+    public final void setDateOfSurgery(LocalDateTime dateOfSurgery) {
+        this.dateOfSurgery.set(dateOfSurgery);
+    }
+
+    public final ObjectProperty<LocalDateTime> dateOfSurgery() {
         return dateOfSurgery;
     }
 
-    public void setDateOfSurgery(LocalDateTime dateOfSurgery) {
-        this.dateOfSurgery = dateOfSurgery;
+    public final String getSurgery() {
+        return surgery.get();
     }
 
-    public String getSurgery() {
+    public final void setSurgery(String surgery) {
+        this.surgery.set(surgery);
+    }
+
+    public final StringProperty surgeryProperty() {
         return surgery;
     }
 
-    public void setSurgery(String surgery) {
-        this.surgery = surgery;
+    public final BigDecimal getRoomFee() {
+        return roomFee.get();
     }
 
-    public BigDecimal getRoomFee() {
+    public final void setRoomFee(BigDecimal roomFee) {
+        this.roomFee.set(roomFee);
+    }
+
+    public final ObjectProperty<BigDecimal> roomFeeProperty(){
         return roomFee;
     }
-
-    public void setRoomFee(BigDecimal roomFee) {
-        this.roomFee = roomFee;
+    
+    public final BigDecimal getSurgeonFee() {
+        return surgeonFee.get();
     }
 
-    public BigDecimal getSurgeonFee() {
+    public final void setSurgeonFee(BigDecimal surgeonFee) {
+        this.surgeonFee.set(surgeonFee);
+    }
+
+    public final ObjectProperty<BigDecimal> surgeonFeeProperty(){
         return surgeonFee;
     }
-
-    public void setSurgeonFee(BigDecimal surgeonFee) {
-        this.surgeonFee = surgeonFee;
+    
+    public final BigDecimal getSupplies() {
+        return supplies.get();
     }
 
-    public BigDecimal getSupplies() {
+    public final void setSupplies(BigDecimal supplies) {
+        this.supplies.set(supplies);
+    }
+
+    public final ObjectProperty<BigDecimal> suppliesProperty(){
         return supplies;
     }
-
-    public void setSupplies(BigDecimal supplies) {
-        this.supplies = supplies;
-    }
-
+    
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 23 * hash + this.id;
-        hash = 23 * hash + this.patientId;
-        hash = 23 * hash + Objects.hashCode(this.dateOfSurgery);
-        hash = 23 * hash + Objects.hashCode(this.surgery);
-        hash = 23 * hash + Objects.hashCode(this.roomFee);
-        hash = 23 * hash + Objects.hashCode(this.surgeonFee);
-        hash = 23 * hash + Objects.hashCode(this.supplies);
+        hash = 23 * hash + this.id.get();
+        hash = 23 * hash + this.patientId.get();
+        hash = 23 * hash + Objects.hashCode(this.dateOfSurgery.get());
+        hash = 23 * hash + Objects.hashCode(this.surgery.get());
+        hash = 23 * hash + Objects.hashCode(this.roomFee.get());
+        hash = 23 * hash + Objects.hashCode(this.surgeonFee.get());
+        hash = 23 * hash + Objects.hashCode(this.supplies.get());
         return hash;
     }
 
@@ -122,29 +163,32 @@ public class Surgical implements Serializable, Identifiable{
             return false;
         }
         final Surgical other = (Surgical) obj;
-        if (this.id != other.id) {
+        if (this.id.get() != other.id.get()) {
             return false;
         }
-        if (this.patientId != other.patientId) {
+        if (this.patientId.get() != other.patientId.get()) {
             return false;
         }
-        if (!Objects.equals(this.dateOfSurgery, other.dateOfSurgery)) {
+        if (!Objects.equals(this.dateOfSurgery.get(), other.dateOfSurgery.get())) {
             return false;
         }
-        if (!Objects.equals(this.surgery, other.surgery)) {
+        if (!Objects.equals(this.surgery.get(), other.surgery.get())) {
             return false;
         }
-        if (!Objects.equals(this.roomFee, other.roomFee)) {
+        if (!Objects.equals(this.roomFee.get(), other.roomFee.get())) {
             return false;
         }
-        if (!Objects.equals(this.surgeonFee, other.surgeonFee)) {
+        if (!Objects.equals(this.surgeonFee.get(), other.surgeonFee.get())) {
             return false;
         }
-        return Objects.equals(this.supplies, other.supplies);
+        return Objects.equals(this.supplies.get(), other.supplies.get());
     }
 
     @Override
     public String toString() {
-        return "Surgical{" + "id=" + id + ", patientId=" + patientId + ", dateOfSurgery=" + dateOfSurgery + ", surgery=" + surgery + ", roomFee=" + roomFee + ", surgeonFee=" + surgeonFee + ", supplies=" + supplies + '}';
+        return "Surgical{" + "id=" + id.get() + ", patientId=" + patientId.get()
+                + ", dateOfSurgery=" + dateOfSurgery.get() + ", surgery=" + surgery.get()
+                + ", roomFee=" + roomFee.get() + ", surgeonFee=" + surgeonFee.get()
+                + ", supplies=" + supplies.get() + '}';
     }
 }

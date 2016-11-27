@@ -4,102 +4,138 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * this is a detail record for the Patient class, db table MEDICATION
  *
  * @author vgorcinschi
  */
-public class Medication implements Serializable, Identifiable{
+public class Medication implements Serializable, Identifiable {
 
     //primary key
-    private int id;
+    private IntegerProperty id;
     //foreign key
-    private int patientId;
+    private IntegerProperty patientId;
     //db column "DATEOFMED", we will convert to Timestamp when talking to db
-    private LocalDateTime dateOfMedication;
+    private ObjectProperty<LocalDateTime> dateOfMedication;
     //db column "MED"
-    private String med;
+    private StringProperty med;
     //columns: "UNITCOST", "UNITS"
-    private BigDecimal unitCost, units;
+    private ObjectProperty<BigDecimal> unitCost, units;
 
     /**
      * no-args constructor
      */
     public Medication() {
+        id = new SimpleIntegerProperty();
+        patientId = new SimpleIntegerProperty();
+        dateOfMedication = new SimpleObjectProperty<>();
+        med = new SimpleStringProperty();
+        unitCost = new SimpleObjectProperty<>();
+        units = new SimpleObjectProperty<>();
     }
 
     /*
      constructor that initializes all fields;
      */
-    public Medication(int id, int patientId, LocalDateTime dateOfSurgery, 
+    public Medication(int id, int patientId, LocalDateTime dateOfSurgery,
             String med, BigDecimal unitCost, BigDecimal units) {
-        this.id = id;
-        this.patientId = patientId;
-        this.dateOfMedication = dateOfSurgery;
-        this.med = med;
-        this.unitCost = unitCost;
-        this.units = units;
+        this.id = new SimpleIntegerProperty(id);
+        this.patientId = new SimpleIntegerProperty(patientId);
+        this.dateOfMedication = new SimpleObjectProperty<>(dateOfSurgery);
+        this.med = new SimpleStringProperty(med);
+        this.unitCost = new SimpleObjectProperty<>(unitCost);
+        this.units = new SimpleObjectProperty<>(units);
     }
 
     @Override
-    public int getId() {
+    public final int getId() {
+        return id.get();
+    }
+
+    public final void setId(int id) {
+        this.id.set(id);
+    }
+
+    public final IntegerProperty idProperty() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public final int getPatientId() {
+        return patientId.get();
     }
 
-    public int getPatientId() {
+    public final void setPatientId(int patientId) {
+        this.patientId.set(patientId);
+    }
+
+    public final IntegerProperty patientIdProperty() {
         return patientId;
     }
 
-    public void setPatientId(int patientId) {
-        this.patientId = patientId;
+    public final LocalDateTime getDateOfMedication() {
+        return dateOfMedication.get();
     }
 
-    public LocalDateTime getDateOfMedication() {
+    public final void setDateOfMedication(LocalDateTime dateOfMedication) {
+        this.dateOfMedication.set(dateOfMedication);
+    }
+
+    public final ObjectProperty<LocalDateTime> dateOfMedicationProperty() {
         return dateOfMedication;
     }
 
-    public void setDateOfMedication(LocalDateTime dateOfMedication) {
-        this.dateOfMedication = dateOfMedication;
+    public final String getMed() {
+        return med.get();
     }
 
-    public String getMed() {
+    public final void setMed(String med) {
+        this.med.set(med);
+    }
+
+    public final StringProperty medProperty() {
         return med;
     }
 
-    public void setMed(String med) {
-        this.med = med;
+    public final BigDecimal getUnitCost() {
+        return unitCost.get();
     }
 
-    public BigDecimal getUnitCost() {
+    public final void setUnitCost(BigDecimal unitCost) {
+        this.unitCost.set(unitCost);
+    }
+
+    public final ObjectProperty<BigDecimal> unitCostProperty() {
         return unitCost;
     }
 
-    public void setUnitCost(BigDecimal unitCost) {
-        this.unitCost = unitCost;
+    public final BigDecimal getUnits() {
+        return units.get();
     }
 
-    public BigDecimal getUnits() {
+    public final void setUnits(BigDecimal units) {
+        this.units.set(units);
+    }
+
+    public final ObjectProperty<BigDecimal> unitsProperty() {
         return units;
-    }
-
-    public void setUnits(BigDecimal units) {
-        this.units = units;
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 83 * hash + this.id;
-        hash = 83 * hash + this.patientId;
-        hash = 83 * hash + Objects.hashCode(this.dateOfMedication);
-        hash = 83 * hash + Objects.hashCode(this.med);
-        hash = 83 * hash + Objects.hashCode(this.unitCost);
-        hash = 83 * hash + Objects.hashCode(this.units);
+        hash = 83 * hash + this.id.get();
+        hash = 83 * hash + this.patientId.get();
+        hash = 83 * hash + Objects.hashCode(this.dateOfMedication.get());
+        hash = 83 * hash + Objects.hashCode(this.med.get());
+        hash = 83 * hash + Objects.hashCode(this.unitCost.get());
+        hash = 83 * hash + Objects.hashCode(this.units.get());
         return hash;
     }
 
@@ -112,26 +148,28 @@ public class Medication implements Serializable, Identifiable{
             return false;
         }
         final Medication other = (Medication) obj;
-        if (this.id != other.id) {
+        if (this.id.get() != other.id.get()) {
             return false;
         }
-        if (this.patientId != other.patientId) {
+        if (this.patientId.get() != other.patientId.get()) {
             return false;
         }
-        if (!Objects.equals(this.dateOfMedication, other.dateOfMedication)) {
+        if (!Objects.equals(this.dateOfMedication.get(), other.dateOfMedication.get())) {
             return false;
         }
-        if (!Objects.equals(this.med, other.med)) {
+        if (!Objects.equals(this.med.get(), other.med.get())) {
             return false;
         }
-        if (!Objects.equals(this.unitCost, other.unitCost)) {
+        if (!Objects.equals(this.unitCost.get(), other.unitCost.get())) {
             return false;
         }
-        return Objects.equals(this.units, other.units);
+        return Objects.equals(this.units.get(), other.units.get());
     }
 
     @Override
     public String toString() {
-        return "Medication{" + "id=" + id + ", patientId=" + patientId + ", dateOfSurgery=" + dateOfMedication + ", med=" + med + ", unitCost=" + unitCost + ", units=" + units + '}';
+        return "Medication{" + "id=" + id.get() + ", patientId=" + patientId.get()
+                + ", dateOfSurgery=" + dateOfMedication.get() + ", med=" + med.get()
+                + ", unitCost=" + unitCost.get() + ", units=" + units.get() + '}';
     }
 }
