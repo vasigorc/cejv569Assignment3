@@ -1,5 +1,7 @@
 package ca.vgorcinschi.controller;
 
+import ca.vgorcinschi.model.Inpatient;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @author vgorcinschi
  */
 @Component
-public class InpatientTabController extends AbstractTabController implements Command {
+public class InpatientTabController extends AbstractTabController <Inpatient> implements Command {
 
     /**
      * Initializes the controller class.
@@ -21,4 +23,9 @@ public class InpatientTabController extends AbstractTabController implements Com
     public void execute() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+
+    @Override
+    public void populateTableView(List<Inpatient> list) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
