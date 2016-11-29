@@ -3,12 +3,14 @@ package ca.vgorcinschi.controller;
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Patient;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +21,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PatientTabController extends AbstractTabController<Patient> implements Command {
 
+    @Autowired
+    PatientDBService service;
+    
     @FXML
     TableView<Patient> patientDataTable;
     //data table columns
@@ -58,6 +63,8 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 .admissionDateProperty());
         releaseDateColumn.setCellValueFactory(cellData -> cellData.getValue()
                 .releaseDateProperty());
+        //on our init() we will load all patients
+        populateTableView(service.allPatients().orElse(new LinkedList<>()));
     }
 
     public PatientDBService getService() {
