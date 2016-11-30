@@ -1,5 +1,6 @@
 package ca.vgorcinschi.controller;
 
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MainController implements TabMediator {
     
+    @FXML private ResourceBundle resources;
     @FXML private PatientTabController patientTabController;
     @FXML private InpatientTabController inpatientTabController;
     @FXML private MedicationTabController medicationTabController;

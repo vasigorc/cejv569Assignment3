@@ -1,5 +1,7 @@
 package ca.vgorcinschi;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,7 +26,12 @@ public class App extends Application {
     @Override
     public void init() throws Exception {
         applicationContext = SpringApplication.run(App.class);
-        FXMLLoader myLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        ResourceBundle bundle = ResourceBundle.getBundle("MessagesBundle", new Locale("fr_CA"));
+        FXMLLoader myLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"), bundle);
+        /**
+         * the idea of populating the controller factory with Spring's appcontext
+         * beans comes from here: https://www.youtube.com/watch?v=hjeSOxi3uPg
+         */
         myLoader.setControllerFactory(applicationContext::getBean);
         rootNode = myLoader.load();
     }
