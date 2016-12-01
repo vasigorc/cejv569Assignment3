@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" 
-            xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65" 
-            fx:controller="ca.vgorcinschi.controller.MainController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.MainController">
     <stylesheets>
         <URL value="@/styles/main.css" />
     </stylesheets>
     <children>
-        <TabPane styleClass="tab-pane" prefHeight="400.0" prefWidth="600.0"  tabClosingPolicy="UNAVAILABLE">
+        <TabPane prefHeight="400.0" prefWidth="600.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="Patient">
+                <Tab text="%patientTab">
                     <content>
                         <fx:include fx:id="patientTab" source="PatientTab.fxml" />
                     </content>
                 </Tab>
-                <Tab text="Inpatient">
+                <Tab text="%inpatientTab">
                     <content>
                         <fx:include fx:id="inpatientTab" source="InpatientTab.fxml" />
                     </content>
                 </Tab>
-                <Tab text="Medication">
+                <Tab text="%medicationTab">
                     <content>
                         <fx:include fx:id="medicationTab" source="MedicationTab.fxml" />
                     </content>
                 </Tab>
-                <Tab text="Surgical">
+                <Tab text="%surgicalTab">
                     <content>
                         <fx:include fx:id="surgicalTab" source="SurgicalTab.fxml" />
                     </content>
