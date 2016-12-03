@@ -115,12 +115,29 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             //disallow DB query on 20+ characters
             if (nameFilter.getText().length() > 20) {
                 refreshButton.setDisable(true);
-                if (mediator.getResourceBundle() == null) {
-                    System.err.println("mediator is null");
-                }
                 filterErrorText.setText(mediator.getResourceBundle().getString("stringTooLong"));
                 filterErrorText.setVisible(true);
-                
+
+            } else {
+                refreshButton.setDisable(false);
+                filterErrorText.setVisible(false);
+            }
+        });
+
+        //for the id filter
+        idFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!idFilter.getText().isEmpty()) {
+                nameFilter.setDisable(true);
+            } else {
+                nameFilter.setDisable(false);
+            }
+
+            //disallow DB query on 4+ ints
+            if (idFilter.getText().length() > 4) {
+                refreshButton.setDisable(true);
+                filterErrorText.setText(mediator.getResourceBundle().getString("intTooLong"));
+                filterErrorText.setVisible(true);
+
             } else {
                 refreshButton.setDisable(false);
                 filterErrorText.setVisible(false);
