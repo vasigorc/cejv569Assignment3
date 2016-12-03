@@ -1,29 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
+<AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" 
+            prefWidth="900.0" styleClass="mainFxmlClass" 
+            xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="ca.vgorcinschi.controller.PatientTabController">
     <stylesheets>
         <URL value="@/styles/patienttab.css" />
     </stylesheets>
-   <children>
-      <VBox prefHeight="600.0" prefWidth="900.0">
-         <children>
-            <TableView fx:id="patientDataTable" prefHeight="300.0" prefWidth="900.0">
-              <columns>
-                <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
-                <TableColumn fx:id="lastNameColumn" prefWidth="170.0" text="%lastName" />
-                  <TableColumn fx:id="firstNameColumn" prefWidth="170.0" text="%firstName" />
-                  <TableColumn fx:id="diagnosisColumn" prefWidth="170.0" text="%diagnosis" />
-                  <TableColumn fx:id="admissionDateColumn" prefWidth="170.0" text="%admissionDate" />
-                  <TableColumn fx:id="releaseDateColumn" prefWidth="170.0" text="%releaseDate" />
-              </columns>
-            </TableView>
-         </children>
-      </VBox>
-   </children>
+    <children>
+        <VBox prefHeight="600.0" prefWidth="900.0">         
+            <children>
+                <FlowPane prefHeight="50.0" prefWidth="900.0">           
+                    <Label text="%nameFilter" textAlignment="CENTER" />
+                    <TextField fx:id="nameFilter" prefHeight="26.0" prefWidth="148.0" promptText="%maxLength">
+                        <FlowPane.margin>
+                            <Insets left="5.0" right="10.0" />
+                        </FlowPane.margin>
+                    </TextField>
+                    <Label text="\%idFilter">
+                        <FlowPane.margin>
+                            <Insets bottom="5.0" right="5.0" top="10.0" />
+                        </FlowPane.margin>
+                    </Label>
+                    <TextField fx:id="idFilter" promptText="%numbersOnly" />
+                    <padding>
+                        <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+                    </padding>
+                </FlowPane>
+                <TableView fx:id="patientDataTable" prefHeight="300.0" prefWidth="900.0">
+                    <columns>
+                        <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="lastNameColumn" prefWidth="170.0" text="%lastName" />
+                        <TableColumn fx:id="firstNameColumn" prefWidth="170.0" text="%firstName" />
+                        <TableColumn fx:id="diagnosisColumn" prefWidth="170.0" text="%diagnosis" />
+                        <TableColumn fx:id="admissionDateColumn" prefWidth="170.0" text="%admissionDate" />
+                        <TableColumn fx:id="releaseDateColumn" prefWidth="170.0" text="%releaseDate" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>      
+    </children>
 </AnchorPane>

@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @Autowired
     PatientDBService service;
+    
+    @FXML
+    TextField nameFilter;
+    
+    @FXML
+    TextField idFilter;
     
     @FXML
     TableView<Patient> patientDataTable;
