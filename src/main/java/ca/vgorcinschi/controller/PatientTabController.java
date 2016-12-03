@@ -9,9 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,15 +25,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class PatientTabController extends AbstractTabController<Patient> implements Command {
 
+    //wired DAO
     @Autowired
     PatientDBService service;
-    
+
+    //filter fields
     @FXML
     TextField nameFilter;
-    
+
     @FXML
     TextField idFilter;
-    
+
+    //refresh button in the filter section
+    @FXML
+    Button refreshButton;
+
+    //error message for filters - invisible by default
+    @FXML
+    Text filterErrorText;
+
     @FXML
     TableView<Patient> patientDataTable;
     //data table columns
@@ -73,6 +85,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 .releaseDateProperty());
         //on our init() we will load all patients
         populateTableView(service.allPatients().orElse(new LinkedList<>()));
+        initializeListeners();
     }
 
     public PatientDBService getService() {
@@ -84,9 +97,34 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
     }
-    
+
     @FXML
-    public void updateTable(ActionEvent e){
-    // TODO
+    public void updateTable(ActionEvent e) {
+        // TODO
+    }
+
+    private void initializeListeners() {
+        //for the name filter
+        nameFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
+            //we can only search by name or id, not both!
+            if (!nameFilter.getText().isEmpty()) {
+                idFilter.setDisable(true);
+            } else {
+                idFilter.setDisable(false);
+            }
+            //disallow DB query on 20+ characters
+            if (nameFilter.getText().length() > 20) {
+                refreshButton.setDisable(true);
+                if (mediator.getResourceBundle() == null) {
+                    System.err.println("mediator is null");
+                }
+                filterErrorText.setText(mediator.getResourceBundle().getString("stringTooLong"));
+                filterErrorText.setVisible(true);
+                
+            } else {
+                refreshButton.setDisable(false);
+                filterErrorText.setVisible(false);
+            }
+        });
     }
 }

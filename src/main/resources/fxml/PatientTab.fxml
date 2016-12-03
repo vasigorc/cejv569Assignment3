@@ -12,11 +12,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 <?import ca.vgorcinschi.components.*?>
 
-<AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" 
-            prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" 
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
+<AnchorPane id="AnchorPane" fx:id="patientTab" 
+            prefHeight="600.0" prefWidth="900.0" styleClass="mainFxmlClass" 
+            xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="ca.vgorcinschi.controller.PatientTabController">
     <stylesheets>
         <URL value="@/styles/patienttab.css" />
     </stylesheets>
@@ -36,7 +38,7 @@
                         </FlowPane.margin>
                     </Label>
                     <NumberField fx:id="idFilter" promptText="%numbersOnly" />
-                    <Button mnemonicParsing="false" onAction="#updateTable">
+                    <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#updateTable">
                         <graphic>
                             <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                 <image>
@@ -48,6 +50,12 @@
                             <Insets left="15.0" />
                         </FlowPane.margin>
                     </Button>
+               <Text fx:id="filterErrorText" fill="#d31111" strokeType="OUTSIDE" 
+                     strokeWidth="0.0" visible="false">
+                  <FlowPane.margin>
+                     <Insets left="10.0" />
+                  </FlowPane.margin>
+               </Text>
                     <padding>
                         <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
                     </padding>
