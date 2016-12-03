@@ -2,18 +2,20 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" 
-            prefWidth="900.0" styleClass="mainFxmlClass" 
-            xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="ca.vgorcinschi.controller.PatientTabController">
+            prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" 
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
     <stylesheets>
         <URL value="@/styles/patienttab.css" />
     </stylesheets>
@@ -27,12 +29,24 @@
                             <Insets left="5.0" right="10.0" />
                         </FlowPane.margin>
                     </TextField>
-                    <Label text="\%idFilter">
+                    <Label text="%idFilter">
                         <FlowPane.margin>
                             <Insets bottom="5.0" right="5.0" top="10.0" />
                         </FlowPane.margin>
                     </Label>
                     <TextField fx:id="idFilter" promptText="%numbersOnly" />
+                    <Button mnemonicParsing="false" onAction="#updateTable">
+                        <graphic>
+                            <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../images/Refresh-32.png" />
+                                </image>
+                            </ImageView>
+                        </graphic>
+                        <FlowPane.margin>
+                            <Insets left="15.0" />
+                        </FlowPane.margin>
+                    </Button>
                     <padding>
                         <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
                     </padding>

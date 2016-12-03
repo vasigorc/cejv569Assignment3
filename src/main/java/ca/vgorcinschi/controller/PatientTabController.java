@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -82,5 +83,10 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void populateTableView(List<Patient> list) {
         ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
+    }
+    
+    @FXML
+    public void updateTable(ActionEvent e){
+    // TODO
     }
 }
