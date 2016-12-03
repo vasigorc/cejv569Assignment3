@@ -5,6 +5,7 @@ import ca.vgorcinschi.model.Patient;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -100,7 +101,23 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     public void updateTable(ActionEvent e) {
-        // TODO
+        List<Patient> result = new LinkedList<>();
+        //starting with the most precise
+        if (!idFilter.getText().isEmpty()) {
+            Optional<Patient> optional = service.findById(Integer.parseInt(idFilter.getText()));
+            if (optional.isPresent()) {
+                result.add(optional.get());
+            }
+        } else if (!nameFilter.getText().isEmpty()) {
+            Optional<List<Patient>> optional = service.findByName(nameFilter.getText());
+            if (optional.isPresent()) {
+                result.addAll(optional.get());
+            }
+        } else {
+            //if db is empty -> empty the view also
+            result = service.allPatients().orElse(new LinkedList<>());
+        }
+        populateTableView(result);
     }
 
     private void initializeListeners() {
