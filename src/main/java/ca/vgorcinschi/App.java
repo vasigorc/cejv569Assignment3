@@ -26,7 +26,7 @@ public class App extends Application {
     @Override
     public void init() throws Exception {
         applicationContext = SpringApplication.run(App.class);
-        ResourceBundle bundle = ResourceBundle.getBundle("MessagesBundle", new Locale("fr_CA"));
+        ResourceBundle bundle = ResourceBundle.getBundle("MessagesBundle", Locale.CANADA_FRENCH);
         FXMLLoader myLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"), bundle);
         /**
          * the idea of populating the controller factory with Spring's appcontext

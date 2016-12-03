@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
+<AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
     <stylesheets>
         <URL value="@/styles/patienttab.css" />
     </stylesheets>
    <children>
-      <HBox prefHeight="400.0" prefWidth="600.0">
+      <VBox prefHeight="600.0" prefWidth="900.0">
          <children>
-            <TableView fx:id="patientDataTable" prefHeight="400.0" prefWidth="600.0">
+            <TableView fx:id="patientDataTable" prefHeight="300.0" prefWidth="900.0">
               <columns>
-                <TableColumn fx:id="idColumn" prefWidth="46.0" text="ID" />
-                <TableColumn fx:id="lastNameColumn" prefWidth="127.0" text="%lastName" />
-                  <TableColumn fx:id="firstNameColumn" prefWidth="94.0" text="%firstName" />
-                  <TableColumn fx:id="diagnosisColumn" prefWidth="84.0" text="%diagnosis" />
-                  <TableColumn fx:id="admissionDateColumn" prefWidth="129.0" text="%admissionDate" />
-                  <TableColumn fx:id="releaseDateColumn" prefWidth="119.0" text="%releaseDate" />
+                <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
+                <TableColumn fx:id="lastNameColumn" prefWidth="170.0" text="%lastName" />
+                  <TableColumn fx:id="firstNameColumn" prefWidth="170.0" text="%firstName" />
+                  <TableColumn fx:id="diagnosisColumn" prefWidth="170.0" text="%diagnosis" />
+                  <TableColumn fx:id="admissionDateColumn" prefWidth="170.0" text="%admissionDate" />
+                  <TableColumn fx:id="releaseDateColumn" prefWidth="170.0" text="%releaseDate" />
               </columns>
             </TableView>
          </children>
-      </HBox>
+      </VBox>
    </children>
 </AnchorPane>
