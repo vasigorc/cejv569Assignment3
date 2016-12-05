@@ -224,12 +224,30 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
         Bindings.bindBidirectional(mvPatientFirstName.textProperty(), picked.firstNameProperty());
         Bindings.bindBidirectional(mvPatientDiagnosis.textProperty(), picked.diagnosisProperty());
+        bindTemporals(picked);
+    }
+
+    private void bindTemporals(Patient picked) {
+        //composite bindings for admission date
         ObjectProperty<LocalDate> admDate = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalDate());
+        admDate.addListener((arg0, oldValue, newValue) -> {
+            picked.setAdmissionDate(LocalDateTime.of(newValue, picked.getAdmissionDate().toLocalTime()));
+        });
         ObjectProperty<LocalTime> admTime = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalTime());
+        admTime.addListener((arg0, oldValue, newValue) ->{
+            picked.setAdmissionDate(LocalDateTime.of(picked.getAdmissionDate().toLocalDate(), newValue));
+        });
         Bindings.bindBidirectional(mvPatientAdmDate.valueProperty(), admDate);
         Bindings.bindBidirectional(mvPatientAdmTime.timeProperty(), admTime);
+        //composite bindings for release date
         ObjectProperty<LocalDate> relDate = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalDate());
+        relDate.addListener((arg0, oldValue, newValue) -> {
+            picked.setReleaseDate(LocalDateTime.of(newValue, picked.getReleaseDate().toLocalTime()));
+        });
         ObjectProperty<LocalTime> relTime = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalTime());
+        relTime.addListener((arg0, oldValue, newValue) ->{
+            picked.setReleaseDate(LocalDateTime.of(picked.getReleaseDate().toLocalDate(), newValue));
+        });
         Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), admDate);
         Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), admTime);
     }

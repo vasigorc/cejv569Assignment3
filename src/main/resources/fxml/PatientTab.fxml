@@ -120,8 +120,8 @@
                   <JFXDatePicker fx:id="mvPatientAdmDate" defaultColor="#086883" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                   <JFXDatePicker fx:id="mvPatientAdmTime" defaultColor="#8f0022" showTime="true" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label prefHeight="5.0" prefWidth="92.0" text="%releaseDate" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                  <JFXDatePicker fx:id="mvPatientRelTime" defaultColor="#086883" showTime="true" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                  <JFXDatePicker fx:id="mvPatientRelDate" defaultColor="#8f0022" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <JFXDatePicker fx:id="mvPatientRelTime" defaultColor="#8f0022" showTime="true" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <JFXDatePicker fx:id="mvPatientRelDate" defaultColor="#086883" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                </children>
             </GridPane>
             </children>
