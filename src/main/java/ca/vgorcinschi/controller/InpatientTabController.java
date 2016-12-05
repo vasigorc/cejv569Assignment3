@@ -28,4 +28,9 @@ public class InpatientTabController extends AbstractTabController <Inpatient> im
     public void populateTableView(List<Inpatient> list) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void bindMainView() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

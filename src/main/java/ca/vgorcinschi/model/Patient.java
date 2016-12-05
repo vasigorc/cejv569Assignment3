@@ -2,6 +2,7 @@ package ca.vgorcinschi.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,11 @@ import javafx.beans.property.StringProperty;
  * @author vgorcinschi
  */
 public class Patient implements Serializable{
+    
+    //default patient
+    public static Patient DEFAULT_PATIENT = new Patient(0, "", "", "", 
+            LocalDateTime.now(ZoneId.systemDefault()), LocalDateTime.now(ZoneId.systemDefault()));
+    
     //primary key
     private IntegerProperty patientId;
     //columns: "LASTNAME", "FIRSTNAME", "DIAGNOSIS"

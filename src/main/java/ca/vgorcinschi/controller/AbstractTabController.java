@@ -36,4 +36,6 @@ public abstract class AbstractTabController <R> {
     }
     
     public abstract void populateTableView(List<R> list);
+    
+    public abstract void bindMainView();
 }

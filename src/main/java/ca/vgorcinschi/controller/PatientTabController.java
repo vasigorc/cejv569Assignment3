@@ -2,10 +2,13 @@ package ca.vgorcinschi.controller;
 
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Patient;
+import static ca.vgorcinschi.model.Patient.DEFAULT_PATIENT;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -60,7 +63,18 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     TableColumn<Patient, LocalDateTime> admissionDateColumn;
     @FXML
     TableColumn<Patient, LocalDateTime> releaseDateColumn;
+    
+    /**
+     * Main view bindings: these are the GUI controls that handle the new
+ or picked patient's data. "mv" prefix stands for Main View
+     */
 
+    @FXML
+    TextField mvPatientID;
+    
+    @FXML
+    TextField mvPatientLastName;
+    
     @Override
     public void execute() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -97,6 +111,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void populateTableView(List<Patient> list) {
         ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
+        //put the first patient to out main view
+        setCurrentPatient(observableList.get(0));
+        bindMainView();
     }
 
     @FXML
@@ -160,5 +177,15 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 filterErrorText.setVisible(false);
             }
         });
+    }
+
+    @Override
+    public void bindMainView() {
+        //if curent patient is null bind with the default patient
+        Patient picked = (getCurrentPatient() == null) ? DEFAULT_PATIENT : getCurrentPatient();
+        //set all properties
+        mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
+        Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
+        
     }
 }
