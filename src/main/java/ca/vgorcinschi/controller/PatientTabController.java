@@ -3,11 +3,11 @@ package ca.vgorcinschi.controller;
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Patient;
 import static ca.vgorcinschi.model.Patient.DEFAULT_PATIENT;
+import ca.vgorcinschi.util.CommonUtil;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import static java.util.Optional.ofNullable;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -63,18 +63,20 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     TableColumn<Patient, LocalDateTime> admissionDateColumn;
     @FXML
     TableColumn<Patient, LocalDateTime> releaseDateColumn;
-    
-    /**
-     * Main view bindings: these are the GUI controls that handle the new
- or picked patient's data. "mv" prefix stands for Main View
-     */
 
+    /**
+     * Main view bindings: these are the GUI controls that handle the new or
+     * picked patient's data. "mv" prefix stands for Main View
+     */
     @FXML
     TextField mvPatientID;
-    
+
     @FXML
     TextField mvPatientLastName;
-    
+
+    @FXML
+    TextField mvPatientFirstName;
+
     @Override
     public void execute() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -138,6 +140,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     }
 
     private void initializeListeners() {
+        //the "of" factorymethod for immutable collections will only become available
+        //from JDK 9 - meanwhile we can use JavaSlang
+        javaslang.collection.List<TextField> maxTwenties
+                = javaslang.collection.List.of(mvPatientLastName, mvPatientFirstName);
+        //set the observable for each of the maxTwenties
+        maxTwenties.forEach(field -> CommonUtil.addTextLimiter(field, 20));
         //for the name filter
         nameFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
             //we can only search by name or id, not both!
@@ -180,12 +188,11 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     }
 
     @Override
-    public void bindMainView() {
-        //if curent patient is null bind with the default patient
+    public void bindMainView() {        //if curent patient is null bind with the default patient
         Patient picked = (getCurrentPatient() == null) ? DEFAULT_PATIENT : getCurrentPatient();
         //set all properties
         mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
-        
+        Bindings.bindBidirectional(mvPatientFirstName.textProperty(), picked.firstNameProperty());
     }
 }

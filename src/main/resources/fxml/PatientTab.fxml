@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import ca.vgorcinschi.components.*?>
+
 <!--<?import ca.vgorcinschi.components.*?>-->
 
 <AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
@@ -92,11 +93,17 @@
                   <Label text="%idFilter" GridPane.halignment="CENTER" />
                   <TextField fx:id="mvPatientID" editable="false" prefHeight="26.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                      <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="80.0" top="5.0" />
                      </GridPane.margin>
                   </TextField>
                   <Label text="%lastName" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                   <TextField fx:id="mvPatientLastName" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                  </TextField>
+                  <Label text="%firstName" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+                  <TextField fx:id="mvPatientFirstName" GridPane.columnIndex="3" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
