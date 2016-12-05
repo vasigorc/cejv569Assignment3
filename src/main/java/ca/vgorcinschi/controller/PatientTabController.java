@@ -4,11 +4,17 @@ import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Patient;
 import static ca.vgorcinschi.model.Patient.DEFAULT_PATIENT;
 import ca.vgorcinschi.util.CommonUtil;
+import com.jfoenix.controls.JFXDatePicker;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
+import static javafx.beans.binding.Bindings.bindBidirectional;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -84,6 +90,18 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     TextArea mvPatientDiagnosis;
+
+    @FXML
+    JFXDatePicker mvPatientAdmDate;
+
+    @FXML
+    JFXDatePicker mvPatientAdmTime;
+
+    @FXML
+    JFXDatePicker mvPatientRelTime;
+
+    @FXML
+    JFXDatePicker mvPatientRelDate;
 
     @Override
     public void execute() {
@@ -206,5 +224,13 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
         Bindings.bindBidirectional(mvPatientFirstName.textProperty(), picked.firstNameProperty());
         Bindings.bindBidirectional(mvPatientDiagnosis.textProperty(), picked.diagnosisProperty());
+        ObjectProperty<LocalDate> admDate = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalDate());
+        ObjectProperty<LocalTime> admTime = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalTime());
+        Bindings.bindBidirectional(mvPatientAdmDate.valueProperty(), admDate);
+        Bindings.bindBidirectional(mvPatientAdmTime.timeProperty(), admTime);
+        ObjectProperty<LocalDate> relDate = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalDate());
+        ObjectProperty<LocalTime> relTime = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalTime());
+        Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), admDate);
+        Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), admTime);
     }
 }

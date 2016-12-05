@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXDatePicker?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -18,7 +19,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import ca.vgorcinschi.components.*?>
-
 <!--<?import ca.vgorcinschi.components.*?>-->
 
 <AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
@@ -74,12 +74,12 @@
                 </TableView>
             <GridPane hgap="5.0" prefHeight="200.0" prefWidth="899.0" vgap="5.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="102.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="827.0" minWidth="10.0" prefWidth="144.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="146.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="162.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="827.0" minWidth="10.0" prefWidth="149.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="444.0" minWidth="10.0" prefWidth="124.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="827.0" minWidth="10.0" prefWidth="149.0" />
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="827.0" minWidth="10.0" prefWidth="140.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="827.0" minWidth="10.0" prefWidth="206.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="827.0" minWidth="10.0" prefWidth="156.0" />
               </columnConstraints>
               <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -116,6 +116,12 @@
                         <Insets bottom="15.0" right="5.0" top="10.0" />
                      </GridPane.margin>
                   </TextArea>
+                  <Label text="%admissionDate" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <JFXDatePicker fx:id="mvPatientAdmDate" defaultColor="#086883" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <JFXDatePicker fx:id="mvPatientAdmTime" defaultColor="#8f0022" showTime="true" showWeekNumbers="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label prefHeight="5.0" prefWidth="92.0" text="%releaseDate" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <JFXDatePicker fx:id="mvPatientRelTime" defaultColor="#086883" showTime="true" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <JFXDatePicker fx:id="mvPatientRelDate" defaultColor="#8f0022" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                </children>
             </GridPane>
             </children>
