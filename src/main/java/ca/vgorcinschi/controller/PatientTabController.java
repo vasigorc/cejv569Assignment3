@@ -16,8 +16,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.text.Text;
+import javaslang.Tuple;
+import javaslang.Tuple2;
+import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,6 +81,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     TextField mvPatientFirstName;
+
+    @FXML
+    TextArea mvPatientDiagnosis;
 
     @Override
     public void execute() {
@@ -142,10 +150,13 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     private void initializeListeners() {
         //the "of" factorymethod for immutable collections will only become available
         //from JDK 9 - meanwhile we can use JavaSlang
-        javaslang.collection.List<TextField> maxTwenties
-                = javaslang.collection.List.of(mvPatientLastName, mvPatientFirstName);
-        //set the observable for each of the maxTwenties
-        maxTwenties.forEach(field -> CommonUtil.addTextLimiter(field, 20));
+        javaslang.collection.List<Tuple2<TextInputControl, Integer>> maxSizes
+                = of(Tuple.of(mvPatientLastName, 20), Tuple.of(mvPatientFirstName, 15),
+                        Tuple.of(mvPatientDiagnosis, 100));
+        //set the observable for each of the maxSizes
+        for (Tuple2<TextInputControl, Integer> tuple : maxSizes) {
+            CommonUtil.addTextLimiter(tuple._1(), tuple._2());
+        }
         //for the name filter
         nameFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
             //we can only search by name or id, not both!
@@ -194,5 +205,6 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
         Bindings.bindBidirectional(mvPatientFirstName.textProperty(), picked.firstNameProperty());
+        Bindings.bindBidirectional(mvPatientDiagnosis.textProperty(), picked.diagnosisProperty());
     }
 }

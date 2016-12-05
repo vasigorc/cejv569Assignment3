@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.function.Function;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 
 /**
  * Common utility methods and functional interfaces
@@ -32,7 +32,7 @@ public class CommonUtil {
     };
 
     //set JavaFX TextField characters limit
-    public static void addTextLimiter(final TextField tf, final int maxLength) {
+    public static void addTextLimiter(final TextInputControl tf, final int maxLength) {
         tf.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (tf.getText().length() > maxLength) {
                 String s = tf.getText().substring(0, maxLength);
