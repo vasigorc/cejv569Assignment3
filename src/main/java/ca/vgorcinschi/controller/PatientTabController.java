@@ -45,7 +45,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     //wired DAO
     @Autowired
     PatientDBService service;
-    
+
     //bean that copies object properties
     @Autowired
     DozerMapper dozerMapper;
@@ -108,9 +108,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     JFXDatePicker mvPatientRelDate;
-    
+
     @FXML
     Button mvAddBtn;
+
+    @FXML
+    Button mvDeleteBtn;
 
     @Override
     public void execute() {
@@ -173,11 +176,16 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         }
         populateTableView(result);
     }
-    
+
     @FXML
-    public void newPatient(){
+    public void newPatient() {
         currentPatient = dozerMapper.dozer().map(DEFAULT_PATIENT, Patient.class);
         bindMainView();
+    }
+
+    @FXML
+    public void deletePatient() {
+        //TODO
     }
 
     private void initializeListeners() {
@@ -230,11 +238,22 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             }
         });
         onTableRowClickHandler();
+        //disable deleting for a new patient
+        currentPatient.patientIdProperty().addListener((arg0, oldValue, newValue) -> {
+            System.err.println("CURRENT ID IS:" + currentPatient.getPatientId());
+            if (currentPatient.getPatientId() == 0) {
+                mvDeleteBtn.setDisable(true);
+            } else {
+                mvDeleteBtn.setDisable(false);
+            }
+        });
     }
 
     @Override
-    public void bindMainView() {        //if curent patient is null bind with the default patient
+    public void bindMainView() {
+        //if curent patient is null bind with the default patient and disable the delete button
         Patient picked = (getCurrentPatient() == null) ? DEFAULT_PATIENT : getCurrentPatient();
+        mvDeleteBtn.setDisable(picked.equals(DEFAULT_PATIENT));
         //set all properties
         mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());

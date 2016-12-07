@@ -135,6 +135,15 @@
                         <Insets bottom="7.0" right="7.0" />
                      </padding>
                   </Button>
+                  <Button fx:id="mvDeleteBtn" mnemonicParsing="false" onAction="#deletePatient" prefHeight="28.0" prefWidth="62.0" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../images/Gnome-Edit-Delete-64.png" />
+                                </image>
+                            </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </GridPane>
             </children>
