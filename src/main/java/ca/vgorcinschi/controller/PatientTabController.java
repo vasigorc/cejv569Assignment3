@@ -238,15 +238,6 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             }
         });
         onTableRowClickHandler();
-        //disable deleting for a new patient
-        currentPatient.patientIdProperty().addListener((arg0, oldValue, newValue) -> {
-            System.err.println("CURRENT ID IS:" + currentPatient.getPatientId());
-            if (currentPatient.getPatientId() == 0) {
-                mvDeleteBtn.setDisable(true);
-            } else {
-                mvDeleteBtn.setDisable(false);
-            }
-        });
     }
 
     @Override
