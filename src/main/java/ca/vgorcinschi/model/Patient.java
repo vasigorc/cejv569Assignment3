@@ -109,6 +109,18 @@ public class Patient implements Serializable{
         return diagnosis.get();
     }
 
+    public void setInpatients(List<Inpatient> inpatients) {
+        this.inpatients = inpatients;
+    }
+
+    public void setMedications(List<Medication> medications) {
+        this.medications = medications;
+    }
+
+    public void setSurgicals(List<Surgical> surgicals) {
+        this.surgicals = surgicals;
+    }
+
     public final void setDiagnosis(String diagnosis) {
         this.diagnosis.set(diagnosis);
     }

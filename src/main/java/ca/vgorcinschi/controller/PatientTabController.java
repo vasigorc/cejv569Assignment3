@@ -4,6 +4,7 @@ import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Patient;
 import static ca.vgorcinschi.model.Patient.DEFAULT_PATIENT;
 import ca.vgorcinschi.util.CommonUtil;
+import ca.vgorcinschi.util.DozerMapper;
 import com.jfoenix.controls.JFXDatePicker;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
-import static javafx.beans.binding.Bindings.bindBidirectional;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -21,10 +21,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javaslang.Tuple;
 import javaslang.Tuple2;
@@ -43,6 +45,10 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     //wired DAO
     @Autowired
     PatientDBService service;
+    
+    //bean that copies object properties
+    @Autowired
+    DozerMapper dozerMapper;
 
     //filter fields
     @FXML
@@ -139,8 +145,8 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void populateTableView(List<Patient> list) {
         ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
-        //put the first patient to out main view
-        setCurrentPatient(observableList.get(0));
+        //put a COPY! of the first patient to out main view
+        currentPatient = dozerMapper.dozer().map(observableList.get(0), Patient.class);
         bindMainView();
     }
 
@@ -214,6 +220,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 filterErrorText.setVisible(false);
             }
         });
+        onTableRowClickHandler();
     }
 
     @Override
@@ -234,7 +241,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             picked.setAdmissionDate(LocalDateTime.of(newValue, picked.getAdmissionDate().toLocalTime()));
         });
         ObjectProperty<LocalTime> admTime = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalTime());
-        admTime.addListener((arg0, oldValue, newValue) ->{
+        admTime.addListener((arg0, oldValue, newValue) -> {
             picked.setAdmissionDate(LocalDateTime.of(picked.getAdmissionDate().toLocalDate(), newValue));
         });
         Bindings.bindBidirectional(mvPatientAdmDate.valueProperty(), admDate);
@@ -245,10 +252,27 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             picked.setReleaseDate(LocalDateTime.of(newValue, picked.getReleaseDate().toLocalTime()));
         });
         ObjectProperty<LocalTime> relTime = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalTime());
-        relTime.addListener((arg0, oldValue, newValue) ->{
+        relTime.addListener((arg0, oldValue, newValue) -> {
             picked.setReleaseDate(LocalDateTime.of(picked.getReleaseDate().toLocalDate(), newValue));
         });
         Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), admDate);
         Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), admTime);
+    }
+
+    private void onTableRowClickHandler() {
+        //set a row factory for the table view
+        patientDataTable.setRowFactory(table -> {
+            //a row of records
+            TableRow<Patient> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
+                    Patient clickedRow = row.getItem();
+                    //set new current patient and bind it to the main view
+                    currentPatient = dozerMapper.dozer().map(clickedRow, Patient.class);
+                    bindMainView();
+                }
+            });
+            return row;
+        });
     }
 }
