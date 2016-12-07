@@ -108,6 +108,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     JFXDatePicker mvPatientRelDate;
+    
+    @FXML
+    Button mvAddBtn;
 
     @Override
     public void execute() {
@@ -169,6 +172,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             result = service.allPatients().orElse(new LinkedList<>());
         }
         populateTableView(result);
+    }
+    
+    @FXML
+    public void newPatient(){
+        currentPatient = dozerMapper.dozer().map(DEFAULT_PATIENT, Patient.class);
+        bindMainView();
     }
 
     private void initializeListeners() {

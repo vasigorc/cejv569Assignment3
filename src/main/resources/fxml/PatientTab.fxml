@@ -19,6 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import ca.vgorcinschi.components.*?>
+
 <!--<?import ca.vgorcinschi.components.*?>-->
 
 <AnchorPane id="AnchorPane" fx:id="patientTab" prefHeight="600.0" prefWidth="900.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.PatientTabController">
@@ -122,6 +123,18 @@
                   <Label prefHeight="5.0" prefWidth="92.0" text="%releaseDate" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                   <JFXDatePicker fx:id="mvPatientRelTime" defaultColor="#8f0022" showTime="true" GridPane.columnIndex="4" GridPane.rowIndex="3" />
                   <JFXDatePicker fx:id="mvPatientRelDate" defaultColor="#086883" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <Button fx:id="mvAddBtn" mnemonicParsing="false" onAction="#newPatient" prefHeight="26.0" prefWidth="60.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                     <graphic>
+                            <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@../images/sub_blue_add-128.png" />
+                                </image>
+                            </ImageView>
+                     </graphic>
+                     <padding>
+                        <Insets bottom="7.0" right="7.0" />
+                     </padding>
+                  </Button>
                </children>
             </GridPane>
             </children>
