@@ -9,6 +9,10 @@ import com.jfoenix.controls.JFXDatePicker;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
+import java.time.format.FormatStyle;
+import static java.time.format.FormatStyle.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +30,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
+import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
 import javaslang.Tuple2;
 import static javaslang.collection.List.of;
@@ -136,8 +142,15 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 .diagnosisProperty());
         admissionDateColumn.setCellValueFactory(cellData -> cellData.getValue()
                 .admissionDateProperty());
+        //format the localdatetimes to be more user friendly
+        admissionDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(
+                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT), 
+                        ofLocalizedDateTime(MEDIUM, MEDIUM))));
         releaseDateColumn.setCellValueFactory(cellData -> cellData.getValue()
                 .releaseDateProperty());
+        releaseDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(
+                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT), 
+                        ofLocalizedDateTime(MEDIUM, MEDIUM))));
         //on our init() we will load all patients
         populateTableView(service.allPatients().orElse(new LinkedList<>()));
         initializeListeners();
@@ -185,7 +198,10 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     public void deletePatient() {
-        //TODO
+        if(service.deletePatient(currentPatient.getPatientId())){
+            //if deleted -> reload the view
+            updateTable(null);
+        }
     }
 
     private void initializeListeners() {
