@@ -298,8 +298,8 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         relTime.addListener((arg0, oldValue, newValue) -> {
             picked.setReleaseDate(LocalDateTime.of(picked.getReleaseDate().toLocalDate(), newValue));
         });
-        Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), admDate);
-        Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), admTime);
+        Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), relDate);
+        Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), relTime);
     }
     
     private void onTableRowClickHandler() {
