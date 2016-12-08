@@ -7,8 +7,8 @@
 spring:
     datasource: 
         url: jdbc:mysql://localhost:3306/HOSPITALDB
-        username: root
-        password: concordia
+        username: vgorcinschi
+        password: Flag-Salary-Inward-Least-1
     jmx:
         enabled: false
 logging:

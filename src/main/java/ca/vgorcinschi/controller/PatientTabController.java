@@ -165,8 +165,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void populateTableView(List<Patient> list) {
         ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
+        Optional<Patient> optional = Optional.ofNullable(observableList.get(0));
         //put a COPY! of the first patient to out main view
-        currentPatient = dozerMapper.dozer().map(observableList.get(0), Patient.class);
+        currentPatient = dozerMapper.dozer().map(optional.orElse(DEFAULT_PATIENT), Patient.class);
         bindMainView();
     }
     
