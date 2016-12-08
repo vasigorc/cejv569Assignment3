@@ -144,6 +144,9 @@
                             </ImageView>
                      </graphic>
                   </Button>
+                  <Button fx:id="mvSaveBtn" text="%mvSaveBtn" styleClass="saveBtn" onAction="#savePatient" 
+                            GridPane.columnIndex="2"  mnemonicParsing="false" prefHeight="28.0" prefWidth="90.0" GridPane.halignment="CENTER" GridPane.rowIndex="4">                    
+                  </Button>
                </children>
             </GridPane>
             </children>

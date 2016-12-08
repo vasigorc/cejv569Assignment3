@@ -9,9 +9,7 @@ import com.jfoenix.controls.JFXDatePicker;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
-import java.time.format.FormatStyle;
 import static java.time.format.FormatStyle.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +57,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     //filter fields
     @FXML
     TextField nameFilter;
-
+    
     @FXML
     TextField idFilter;
 
@@ -70,7 +68,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     //error message for filters - invisible by default
     @FXML
     Text filterErrorText;
-
+    
     @FXML
     TableView<Patient> patientDataTable;
     //data table columns
@@ -93,34 +91,37 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
      */
     @FXML
     TextField mvPatientID;
-
+    
     @FXML
     TextField mvPatientLastName;
-
+    
     @FXML
     TextField mvPatientFirstName;
-
+    
     @FXML
     TextArea mvPatientDiagnosis;
-
+    
     @FXML
     JFXDatePicker mvPatientAdmDate;
-
+    
     @FXML
     JFXDatePicker mvPatientAdmTime;
-
+    
     @FXML
     JFXDatePicker mvPatientRelTime;
-
+    
     @FXML
     JFXDatePicker mvPatientRelDate;
-
+    
     @FXML
     Button mvAddBtn;
-
+    
     @FXML
     Button mvDeleteBtn;
-
+    
+    @FXML
+    Button mvSaveBtn;
+    
     @Override
     public void execute() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -144,22 +145,22 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 .admissionDateProperty());
         //format the localdatetimes to be more user friendly
         admissionDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(
-                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT), 
+                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT),
                         ofLocalizedDateTime(MEDIUM, MEDIUM))));
         releaseDateColumn.setCellValueFactory(cellData -> cellData.getValue()
                 .releaseDateProperty());
         releaseDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(
-                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT), 
+                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT),
                         ofLocalizedDateTime(MEDIUM, MEDIUM))));
         //on our init() we will load all patients
         populateTableView(service.allPatients().orElse(new LinkedList<>()));
         initializeListeners();
     }
-
+    
     public PatientDBService getService() {
         return service;
     }
-
+    
     @Override
     public void populateTableView(List<Patient> list) {
         ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
@@ -168,7 +169,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         currentPatient = dozerMapper.dozer().map(observableList.get(0), Patient.class);
         bindMainView();
     }
-
+    
     @FXML
     public void updateTable(ActionEvent e) {
         List<Patient> result = new LinkedList<>();
@@ -189,21 +190,28 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         }
         populateTableView(result);
     }
-
+    
     @FXML
     public void newPatient() {
         currentPatient = dozerMapper.dozer().map(DEFAULT_PATIENT, Patient.class);
         bindMainView();
     }
-
+    
     @FXML
     public void deletePatient() {
-        if(service.deletePatient(currentPatient.getPatientId())){
+        if (service.deletePatient(currentPatient.getPatientId())) {
             //if deleted -> reload the view
             updateTable(null);
         }
     }
-
+    
+    @FXML
+    public void savePatient() {
+        if (service.savePatient(currentPatient)) {
+            updateTable(null);
+        }
+    }
+    
     private void initializeListeners() {
         //the "of" factorymethod for immutable collections will only become available
         //from JDK 9 - meanwhile we can use JavaSlang
@@ -227,7 +235,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 refreshButton.setDisable(true);
                 filterErrorText.setText(mediator.getResourceBundle().getString("stringTooLong"));
                 filterErrorText.setVisible(true);
-
+                
             } else {
                 refreshButton.setDisable(false);
                 filterErrorText.setVisible(false);
@@ -247,7 +255,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 refreshButton.setDisable(true);
                 filterErrorText.setText(mediator.getResourceBundle().getString("intTooLong"));
                 filterErrorText.setVisible(true);
-
+                
             } else {
                 refreshButton.setDisable(false);
                 filterErrorText.setVisible(false);
@@ -255,7 +263,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         });
         onTableRowClickHandler();
     }
-
+    
     @Override
     public void bindMainView() {
         //if curent patient is null bind with the default patient and disable the delete button
@@ -268,7 +276,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         Bindings.bindBidirectional(mvPatientDiagnosis.textProperty(), picked.diagnosisProperty());
         bindTemporals(picked);
     }
-
+    
     private void bindTemporals(Patient picked) {
         //composite bindings for admission date
         ObjectProperty<LocalDate> admDate = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalDate());
@@ -293,7 +301,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), admDate);
         Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), admTime);
     }
-
+    
     private void onTableRowClickHandler() {
         //set a row factory for the table view
         patientDataTable.setRowFactory(table -> {

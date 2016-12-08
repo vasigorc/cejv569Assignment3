@@ -5,3 +5,17 @@
 .mainFxmlClass {
 
 }
+
+.saveBtn{
+    -fx-font-size: 105%;    
+    -fx-base: #5cb85c;
+    -fx-text-fill: #fff;
+    -fx-border-color: #4cae4c;
+    -fx-border-radius:8;
+    -fx-background-radius: 8;
+}
+
+.saveBtn:hover{
+    -fx-base: #449d44;
+    -fx-border-color: #398439;
+}
