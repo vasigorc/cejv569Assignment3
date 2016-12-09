@@ -2,6 +2,7 @@ package ca.vgorcinschi.controller;
 
 import ca.vgorcinschi.model.Patient;
 import java.util.List;
+import javafx.collections.ObservableList;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -12,6 +13,12 @@ public abstract class AbstractTabController <R> {
 
     protected Patient currentPatient;
     protected TabMediator mediator;
+    /**
+     * each of the children of the AbstractTabController
+     * will have an observable list with listeners needing to 
+     * be attached to it.
+     */
+    protected ObservableList<R> observableList;
 
     private final org.slf4j.Logger log
             = LoggerFactory.getLogger(this.getClass().getName());

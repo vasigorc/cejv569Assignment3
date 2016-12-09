@@ -3,10 +3,11 @@
 ##home password: Flag-Salary-Inward-Least-1
 ## school username: root
 ## school password: concordia
+##datasource url at work: jdbc:mysql://localhost:34591/HOSPITALDB
 ---
 spring:
     datasource: 
-        url: jdbc:mysql://localhost:3306/HOSPITALDB
+        url: jdbc:mysql://localhost:34591/HOSPITALDB
         username: vgorcinschi
         password: Flag-Salary-Inward-Least-1
     jmx:

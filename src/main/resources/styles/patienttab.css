@@ -19,3 +19,8 @@
     -fx-base: #449d44;
     -fx-border-color: #398439;
 }
+
+.roundBtn{
+    -fx-border-radius:10;
+    -fx-background-radius: 10;
+}

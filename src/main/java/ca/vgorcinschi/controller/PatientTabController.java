@@ -121,6 +121,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     Button mvSaveBtn;
+    
+    @FXML
+    Button mvRewind;
+    
+    @FXML
+    Button mvForward;    
 
     @Override
     public void execute() {
@@ -163,7 +169,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @Override
     public void populateTableView(List<Patient> list) {
-        ObservableList<Patient> observableList = FXCollections.observableArrayList(list);
+        observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
         if(!observableList.isEmpty()){//only if there isn't an arrayindexoutofbound
             //put a COPY! of the first patient to out main view
@@ -214,6 +220,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         }
     }
 
+    @FXML
+    public void rewindPatient(){}
+    
+    @FXML
+    public void forwardPatient(){}
+    
     private void initializeListeners() {
         //the "of" factorymethod for immutable collections will only become available
         //from JDK 9 - meanwhile we can use JavaSlang
@@ -264,6 +276,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             }
         });
         onTableRowClickHandler();
+       // listListeners();
     }
 
     @Override
@@ -319,5 +332,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             });
             return row;
         });
+    }
+
+    private void listListeners() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
