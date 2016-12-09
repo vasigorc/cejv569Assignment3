@@ -20,7 +20,7 @@ public abstract class AbstractTabController <R> {
      */
     protected ObservableList<R> observableList;
 
-    private final org.slf4j.Logger log
+    protected org.slf4j.Logger log
             = LoggerFactory.getLogger(this.getClass().getName());
 
     public AbstractTabController() {

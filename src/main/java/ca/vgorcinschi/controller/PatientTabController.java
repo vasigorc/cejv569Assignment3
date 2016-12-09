@@ -18,7 +18,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -121,12 +121,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     Button mvSaveBtn;
-    
+
     @FXML
     Button mvRewind;
-    
+
     @FXML
-    Button mvForward;    
+    Button mvForward;
 
     @Override
     public void execute() {
@@ -171,11 +171,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void populateTableView(List<Patient> list) {
         observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
-        if(!observableList.isEmpty()){//only if there isn't an arrayindexoutofbound
-            //put a COPY! of the first patient to out main view
-            currentPatient = dozerMapper.dozer().map(observableList.get(0), Patient.class);            
-        }
-        bindMainView();
+        notifyListListeners();
+        //important to be called before the notifyListListeners();
+        bindMainView();        
     }
 
     @FXML
@@ -221,11 +219,13 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     }
 
     @FXML
-    public void rewindPatient(){}
-    
+    public void rewindPatient() {
+    }
+
     @FXML
-    public void forwardPatient(){}
-    
+    public void forwardPatient() {
+    }
+
     private void initializeListeners() {
         //the "of" factorymethod for immutable collections will only become available
         //from JDK 9 - meanwhile we can use JavaSlang
@@ -276,7 +276,6 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
             }
         });
         onTableRowClickHandler();
-       // listListeners();
     }
 
     @Override
@@ -334,7 +333,17 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         });
     }
 
-    private void listListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void notifyListListeners() {
+        /**
+         * since
+         * https://docs.oracle.com/javafx/2/api/javafx/collections/ListChangeListener.Change.html
+         * is failry useless, we're binding the events manually
+         */
+        if (!observableList.isEmpty()) {//only if there isn't an arrayindexoutofbound
+            //put a COPY! of the first patient to out main view
+            currentPatient = dozerMapper.dozer().map(observableList.get(0), Patient.class);
+        }
+        mvRewind.setDisable(observableList.isEmpty());
+        mvForward.setDisable(observableList.isEmpty());
     }
 }

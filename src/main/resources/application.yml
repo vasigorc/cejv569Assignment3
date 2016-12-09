@@ -4,6 +4,7 @@
 ## school username: root
 ## school password: concordia
 ##datasource url at work: jdbc:mysql://localhost:34591/HOSPITALDB
+##datasource with the default port: jdbc:mysql://localhost:3306/HOSPITALDB
 ---
 spring:
     datasource: 
