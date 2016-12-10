@@ -5,17 +5,22 @@
  */
 package ca.vgorcinschi.util;
 
-import ca.vgorcinschi.model.Patient;
-import static ca.vgorcinschi.model.Patient.DEFAULT_PATIENT;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import static java.util.Optional.empty;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextInputControl;
 import javaslang.Tuple2;
 import javaslang.collection.List;
+import javaslang.control.Try;
+import org.slf4j.LoggerFactory;
 
 /**
  * Common utility methods and functional interfaces
@@ -23,6 +28,51 @@ import javaslang.collection.List;
  * @author vgorcinschi
  */
 public class CommonUtil {
+
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(CommonUtil.class.getName());
+
+    /**
+     * It is kind of the cache that will keep references to the methods by their
+     * classes and method names. This will allow us to not recreate Method
+     * objects everytime we need to hide/disable a JavaFX Node
+     */
+    public static Map<Class<?>, Map<String, Method>> methods;
+
+    //bootstrap the methods map
+    static {
+        methods = new HashMap<>();
+    }
+
+    //method that will populate and return the required methods
+    public static Method findOrCreateMethod(Class<? extends Node> type, String methodName, Class<?> parameterType) throws NoSuchMethodException {
+        /**
+         * check if there is a class in the type's hierarchy that has the
+         * methodName cf:
+         * https://docs.oracle.com/javase/tutorial/java/generics/erasure.html
+         */
+        Optional<Method> optional;
+        //the right class to be put as index
+        Class<?> clazz = type;
+        while (clazz != null) {
+            Try<Method> tryMethod = loadMethod(clazz, methodName, parameterType);
+            if (tryMethod.isSuccess()) {
+                //add class to the cache (if needed)
+                methods.putIfAbsent(clazz, new HashMap<>());
+                System.out.println("classes: "+methods.size());
+                //add method to the cache (if needed)
+                methods.get(clazz).putIfAbsent(methodName, tryMethod.get());
+                return methods.get(clazz).get(methodName);
+            } else {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        throw new NoSuchMethodException("Method " + methodName + " does not belong to any "
+                + "class in the hierarchy of " + type.getSimpleName());
+    }
+
+    private static Try<Method> loadMethod(Class<?> type, String methodName, Class<?> parameterType) {
+        return Try.of(() -> type.getDeclaredMethod(methodName, parameterType));
+    }
 
     /*
      function to transform LocalDateTime into JDBC acceptable Timestamp
@@ -47,15 +97,17 @@ public class CommonUtil {
         });
     }
 
-    public static Predicate<Patient> isDefault = (Patient p) -> {
-        return p.equals(DEFAULT_PATIENT);
-    };
-
     //here the string 2 is the method
     public static void invokeBoolMethod(List<Tuple2<String, Node>> list,
             boolean test) {
-        //get method of node from string
-        //invoke it with the bool method
-        list.forEach(tuple -> tuple._2.setDisable(test));
+        //get method of node from string and invoke it with the bool method
+        list.forEach((Tuple2<String, Node> tuple) -> {
+            try {
+                Method method = findOrCreateMethod(tuple._2.getClass(), tuple._1, boolean.class);
+                method.invoke(tuple._2, test);
+            } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                log.error("Couldn't invoke a boolean method: " + ex.getMessage() + ", " + ex.getClass().getSimpleName());
+            }
+        });
     }
 }

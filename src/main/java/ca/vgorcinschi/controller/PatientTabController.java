@@ -37,7 +37,6 @@ import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
-import java.util.function.Predicate;
 
 /**
  * FXML Controller class
@@ -174,7 +173,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         patientDataTable.setItems(observableList);
         notifyListListeners();
         //important to be called before the notifyListListeners();
-        bindMainView();        
+        bindMainView();
     }
 
     @FXML
@@ -221,7 +220,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     public void rewindPatient() {
-        
+
     }
 
     @FXML
@@ -284,15 +283,12 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void bindMainView() {
         //if curent patient is null bind with the default patient and disable the delete button
         Patient picked = (getCurrentPatient() == null) ? DEFAULT_PATIENT : getCurrentPatient();
-        //disable the delete, forward and rewindbuttons
-        boolean isDefault = picked.equals(DEFAULT_PATIENT);
-        mvDeleteBtn.setDisable(isDefault);
-        mvForward.setDisable(isDefault);
-        mvRewind.setDisable(isDefault);
-        //TODO
+        //disable the delete, forward and rewindbuttons if we create a new patient
         invokeBoolMethod(javaslang.collection.List.of(
-                Tuple.of("setDisabled", mvDeleteBtn)),
-                CommonUtil.isDefault.test(picked));
+                Tuple.of("setDisable", mvDeleteBtn),
+                Tuple.of("setDisable", mvForward),
+                Tuple.of("setDisable", mvRewind)
+        ),  picked.equals(DEFAULT_PATIENT));
         //set all properties
         mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
