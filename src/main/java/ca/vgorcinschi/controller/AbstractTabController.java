@@ -15,6 +15,14 @@ public abstract class AbstractTabController<R> {
 
     protected Patient currentPatient;
     protected TabMediator mediator;
+
+    public TabMediator getMediator() {
+        return mediator;
+    }
+
+    public void setMediator(TabMediator mediator) {
+        this.mediator = mediator;
+    }
     /**
      * each of the children of the AbstractTabController will have an observable
      * list with listeners needing to be attached to it.
@@ -35,14 +43,6 @@ public abstract class AbstractTabController<R> {
         this.currentPatient = currentPatient;
     }
 
-    public TabMediator getMediator() {
-        return mediator;
-    }
-
-    public void setMediator(TabMediator mediator) {
-        this.mediator = mediator;
-    }
-
     protected int currentMainViewIndex(Predicate<R> predicate) {
         Optional<R> optional = observableList.stream()
                 .filter(patient -> predicate.test(patient))
@@ -53,4 +53,6 @@ public abstract class AbstractTabController<R> {
     public abstract void populateTableView(List<R> list);
 
     public abstract void bindMainView();
+    
+    public abstract void notifyListListeners();
 }

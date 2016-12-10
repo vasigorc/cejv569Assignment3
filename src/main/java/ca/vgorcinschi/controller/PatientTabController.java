@@ -48,11 +48,11 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     //wired DAO
     @Autowired
-    PatientDBService service;
+    private PatientDBService service;
 
     //bean that copies object properties
     @Autowired
-    DozerMapper dozerMapper;
+    private DozerMapper dozerMapper;
 
     //filter fields
     @FXML
@@ -130,7 +130,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        getMediator().updatePatient();
     }
 
     /**
@@ -171,8 +171,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void populateTableView(List<Patient> list) {
         observableList = FXCollections.observableArrayList(list);
         patientDataTable.setItems(observableList);
-        notifyListListeners();
-        //important to be called before the notifyListListeners();
+        notifyListListeners();//now current patient is set
         bindMainView();
     }
 
@@ -199,7 +198,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     public void newPatient() {
-        currentPatient = dozerMapper.dozer().map(DEFAULT_PATIENT, Patient.class);
+        setCurrentPatient(dozerMapper.dozer().map(DEFAULT_PATIENT, Patient.class));
         bindMainView();
     }
 
@@ -348,7 +347,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
                     Patient clickedRow = row.getItem();
                     //set new current patient and bind it to the main view
-                    currentPatient = dozerMapper.dozer().map(clickedRow, Patient.class);
+                    setCurrentPatient(dozerMapper.dozer().map(clickedRow, Patient.class));
                     bindMainView();
                 }
             });
@@ -356,7 +355,8 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         });
     }
 
-    private void notifyListListeners() {
+    @Override
+    public void notifyListListeners() {
         /**
          * since
          * https://docs.oracle.com/javafx/2/api/javafx/collections/ListChangeListener.Change.html
@@ -364,9 +364,17 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
          */
         if (!observableList.isEmpty()) {//only if there isn't an arrayindexoutofbound
             //put a COPY! of the first patient to out main view
-            currentPatient = dozerMapper.dozer().map(observableList.get(0), Patient.class);
+            setCurrentPatient(dozerMapper.dozer().map(observableList.get(0), Patient.class));
         }
         mvRewind.setDisable(observableList.isEmpty());
         mvForward.setDisable(observableList.isEmpty());
     }
+
+    @Override
+    public void setCurrentPatient(Patient currentPatient) {
+        super.setCurrentPatient(currentPatient); 
+        if (getMediator()!=null) {//all tabs are initialized and are ready to listen to changes
+            execute();
+        }
+    }   
 }

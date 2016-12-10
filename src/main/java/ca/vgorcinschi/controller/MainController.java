@@ -21,7 +21,10 @@ public class MainController implements TabMediator {
      * Initializes the controller class.
      */
     @FXML private void initialize() {
+        //plug-in the mediator to all tabs
         patientTabController.setMediator(this);
+        medicationTabController.setMediator(this);
+        updatePatient();
     }    
 
     @Override
@@ -34,6 +37,7 @@ public class MainController implements TabMediator {
     @Override
     public void reloadPatient() {
         patientTabController.getService().savePatient(patientTabController.getCurrentPatient());
+        patientTabController.updateTable(null);
         updatePatient();
     }    
 

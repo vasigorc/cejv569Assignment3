@@ -135,10 +135,21 @@ public class PatientDBServiceJDBC implements PatientDBService {
 
     @Override
     public Optional<List<Patient>> allPatients() {
-        if (patientRepository.getAll() == null && patientRepository.getAll().isEmpty()) {
+        List<Patient> patients = patientRepository.getAll();
+        if (patients == null && patients.isEmpty()) {
             log.warn("Query for all patients returned 0 records.");
+        } else {
+            patients.stream().map((p) -> {
+                p.getInpatients().addAll(inpatientRepository.getPatientDetails(p.getPatientId()));
+                return p;
+            }).map((p) -> {
+                p.getSurgicals().addAll(surgicalRepository.getPatientDetails(p.getPatientId()));
+                return p;
+            }).forEach((p) -> {
+                p.getMedications().addAll(medicationRepository.getPatientDetails(p.getPatientId()));
+            });
         }
-        return ofNullable(patientRepository.getAll());
+        return ofNullable(patients);
     }
 
     @Override

@@ -11,4 +11,15 @@
     <stylesheets>
         <URL value="@/styles/medicationtab.css"/>
     </stylesheets>
+    <children>
+        <TableView fx:id="medicationDataTable" prefHeight="280.0" prefWidth="900.0">
+            <columns>
+                <TableColumn fx:id="idColumn" prefWidth="52.0" text="ID" />
+                <TableColumn fx:id="dateOfMedicationColumn" prefWidth="170.0" text="%dateOfMedication" />
+                <TableColumn fx:id="medNameColumn" prefWidth="212.0" text="%medName" />
+                <TableColumn fx:id="unitCostColumn" prefWidth="212.0" text="%unitCost" />
+                <TableColumn fx:id="unitsColumn" prefWidth="212.0" text="%nrUnits" />
+            </columns>
+        </TableView>
+    </children>
 </AnchorPane>
