@@ -5,11 +5,17 @@
  */
 package ca.vgorcinschi.util;
 
+import ca.vgorcinschi.model.Patient;
+import static ca.vgorcinschi.model.Patient.DEFAULT_PATIENT;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 import javafx.scene.control.TextInputControl;
+import javaslang.Tuple2;
+import javaslang.collection.List;
 
 /**
  * Common utility methods and functional interfaces
@@ -39,5 +45,17 @@ public class CommonUtil {
                 tf.setText(s);
             }
         });
+    }
+
+    public static Predicate<Patient> isDefault = (Patient p) -> {
+        return p.equals(DEFAULT_PATIENT);
+    };
+
+    //here the string 2 is the method
+    public static void invokeBoolMethod(List<Tuple2<String, Node>> list,
+            boolean test) {
+        //get method of node from string
+        //invoke it with the bool method
+        list.forEach(tuple -> tuple._2.setDisable(test));
     }
 }

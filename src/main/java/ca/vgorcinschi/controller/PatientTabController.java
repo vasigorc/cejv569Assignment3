@@ -18,7 +18,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -37,6 +36,8 @@ import javaslang.Tuple2;
 import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
+import java.util.function.Predicate;
 
 /**
  * FXML Controller class
@@ -220,6 +221,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     public void rewindPatient() {
+        
     }
 
     @FXML
@@ -282,7 +284,15 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     public void bindMainView() {
         //if curent patient is null bind with the default patient and disable the delete button
         Patient picked = (getCurrentPatient() == null) ? DEFAULT_PATIENT : getCurrentPatient();
-        mvDeleteBtn.setDisable(picked.equals(DEFAULT_PATIENT));
+        //disable the delete, forward and rewindbuttons
+        boolean isDefault = picked.equals(DEFAULT_PATIENT);
+        mvDeleteBtn.setDisable(isDefault);
+        mvForward.setDisable(isDefault);
+        mvRewind.setDisable(isDefault);
+        //TODO
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisabled", mvDeleteBtn)),
+                CommonUtil.isDefault.test(picked));
         //set all properties
         mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
