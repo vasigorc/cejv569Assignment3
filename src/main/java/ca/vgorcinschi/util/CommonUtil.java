@@ -11,8 +11,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import static java.util.Optional.empty;
 import java.util.function.Function;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -47,18 +45,14 @@ public class CommonUtil {
     public static Method findOrCreateMethod(Class<? extends Node> type, String methodName, Class<?> parameterType) throws NoSuchMethodException {
         /**
          * check if there is a class in the type's hierarchy that has the
-         * methodName cf:
-         * https://docs.oracle.com/javase/tutorial/java/generics/erasure.html
+         * methodName cf: https://docs.oracle.com/javase/tutorial/java/generics/erasure.html
          */
-        Optional<Method> optional;
-        //the right class to be put as index
         Class<?> clazz = type;
         while (clazz != null) {
             Try<Method> tryMethod = loadMethod(clazz, methodName, parameterType);
             if (tryMethod.isSuccess()) {
                 //add class to the cache (if needed)
                 methods.putIfAbsent(clazz, new HashMap<>());
-                System.out.println("classes: "+methods.size());
                 //add method to the cache (if needed)
                 methods.get(clazz).putIfAbsent(methodName, tryMethod.get());
                 return methods.get(clazz).get(methodName);

@@ -2,6 +2,8 @@ package ca.vgorcinschi.controller;
 
 import ca.vgorcinschi.model.Patient;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import javafx.collections.ObservableList;
 import org.slf4j.LoggerFactory;
 
@@ -9,14 +11,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author vgorcinschi
  */
-public abstract class AbstractTabController <R> {
+public abstract class AbstractTabController<R> {
 
     protected Patient currentPatient;
     protected TabMediator mediator;
     /**
-     * each of the children of the AbstractTabController
-     * will have an observable list with listeners needing to 
-     * be attached to it.
+     * each of the children of the AbstractTabController will have an observable
+     * list with listeners needing to be attached to it.
      */
     protected ObservableList<R> observableList;
 
@@ -41,8 +42,15 @@ public abstract class AbstractTabController <R> {
     public void setMediator(TabMediator mediator) {
         this.mediator = mediator;
     }
-    
+
+    protected int currentMainViewIndex(Predicate<R> predicate) {
+        Optional<R> optional = observableList.stream()
+                .filter(patient -> predicate.test(patient))
+                .findFirst();
+        return optional.isPresent() ? observableList.indexOf(optional.get()) : -1;
+    }
+
     public abstract void populateTableView(List<R> list);
-    
+
     public abstract void bindMainView();
 }

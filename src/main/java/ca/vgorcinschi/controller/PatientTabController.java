@@ -220,11 +220,28 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @FXML
     public void rewindPatient() {
-
+        int currentIndex = currentMainViewIndex(patient -> currentPatient.getPatientId() == patient.getPatientId());
+        if (currentIndex > 0) {
+            setCurrentPatient(dozerMapper.dozer().map(observableList.get(currentIndex - 1), Patient.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvRewind)
+        ), currentIndex <= 0);
     }
 
     @FXML
     public void forwardPatient() {
+        int currentIndex = currentMainViewIndex(patient -> currentPatient.getPatientId() == patient.getPatientId());
+        if (currentIndex < observableList.size()) {
+            setCurrentPatient(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Patient.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvRewind)
+        ), currentIndex >= observableList.size());
     }
 
     private void initializeListeners() {
@@ -288,7 +305,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 Tuple.of("setDisable", mvDeleteBtn),
                 Tuple.of("setDisable", mvForward),
                 Tuple.of("setDisable", mvRewind)
-        ),  picked.equals(DEFAULT_PATIENT));
+        ), picked.equals(DEFAULT_PATIENT));
         //set all properties
         mvPatientID.textProperty().bind(picked.patientIdProperty().asString());
         Bindings.bindBidirectional(mvPatientLastName.textProperty(), picked.lastNameProperty());
