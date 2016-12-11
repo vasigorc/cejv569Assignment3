@@ -1,5 +1,6 @@
 package ca.vgorcinschi.controller;
 
+import ca.vgorcinschi.controller.helpers.CurrencyBigDecimalConverter;
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Medication;
 import ca.vgorcinschi.model.Patient;
@@ -11,6 +12,7 @@ import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -31,9 +33,6 @@ public class MedicationTabController extends AbstractTabController<Medication> i
     //wired DAO
     @Autowired
     PatientDBService service;
-    
-    @Autowired
-    private TabMediator mediator;
 
     //bean that copies object properties
     @Autowired
@@ -80,6 +79,8 @@ public class MedicationTabController extends AbstractTabController<Medication> i
                 .medProperty());
         unitCostColumn.setCellValueFactory(cellData -> cellData.getValue()
                 .unitCostProperty());
+        unitCostColumn.setCellFactory(TextFieldTableCell.forTableColumn(
+                new CurrencyBigDecimalConverter(Locale.CANADA_FRENCH)));
         unitsColumn.setCellValueFactory(cellData -> cellData.getValue()
                 .unitsProperty());
         //load the medication (if exist) for current patient (if exists)
