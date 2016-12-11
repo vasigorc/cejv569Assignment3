@@ -37,6 +37,9 @@ import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
+import java.util.OptionalInt;
+import javafx.scene.Node;
+import javaslang.Tuple4;
 
 /**
  * FXML Controller class
@@ -246,13 +249,13 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     private void initializeListeners() {
         //the "of" factorymethod for immutable collections will only become available
         //from JDK 9 - meanwhile we can use JavaSlang
-        javaslang.collection.List<Tuple2<TextInputControl, Integer>> maxSizes
-                = of(Tuple.of(mvPatientLastName, 20), Tuple.of(mvPatientFirstName, 15),
-                        Tuple.of(mvPatientDiagnosis, 100));
-        //set the observable for each of the maxSizes
-        for (Tuple2<TextInputControl, Integer> tuple : maxSizes) {
-            CommonUtil.addTextLimiter(tuple._1(), tuple._2());
-        }
+        //set the observable for each element that has ONLY max constraints
+        of(Tuple.of(mvPatientDiagnosis, 100)).forEach(tuple -> CommonUtil.addTextLimiter(tuple._1(), tuple._2()));
+        javaslang.collection.List<Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>>> minMaxSizes
+                = of(Tuple.of(mvPatientLastName, 20, OptionalInt.of(2), of(mvSaveBtn)), 
+                        Tuple.of(mvPatientFirstName, 15, OptionalInt.of(1), of(mvSaveBtn)));
+        //and for each of the minMaxSizes
+        minMaxSizes.forEach(tuple -> CommonUtil.addTextLimiter(tuple._1(), tuple._2(), tuple._3, tuple._4));
         //for the name filter
         nameFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
             //we can only search by name or id, not both!

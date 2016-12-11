@@ -11,10 +11,19 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.Function;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import static javafx.scene.layout.BorderStroke.*;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javaslang.Tuple2;
 import javaslang.collection.List;
 import javaslang.control.Try;
@@ -45,7 +54,8 @@ public class CommonUtil {
     public static Method findOrCreateMethod(Class<? extends Node> type, String methodName, Class<?> parameterType) throws NoSuchMethodException {
         /**
          * check if there is a class in the type's hierarchy that has the
-         * methodName cf: https://docs.oracle.com/javase/tutorial/java/generics/erasure.html
+         * methodName cf:
+         * https://docs.oracle.com/javase/tutorial/java/generics/erasure.html
          */
         Class<?> clazz = type;
         while (clazz != null) {
@@ -83,10 +93,28 @@ public class CommonUtil {
 
     //set JavaFX TextField characters limit
     public static void addTextLimiter(final TextInputControl tf, final int maxLength) {
+        addTextLimiter(tf, maxLength, OptionalInt.empty(), null);
+//        tf.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+//            if (tf.getText().length() > maxLength) {
+//                String s = tf.getText().substring(0, maxLength);
+//                tf.setText(s);
+//            }
+//        });
+    }
+
+    public static void addTextLimiter(final TextInputControl tf, final int maxLength, OptionalInt minLength, List<Node> observers) {
         tf.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (tf.getText().length() > maxLength) {
                 String s = tf.getText().substring(0, maxLength);
                 tf.setText(s);
+            }
+            if (minLength.isPresent() && observers != null) {
+                observers.forEach(n -> n.setDisable(tf.getText().length() < minLength.getAsInt()));
+                if (tf.getText().length() < minLength.getAsInt()) {
+                    tf.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DOTTED, new CornerRadii(5), new BorderWidths(2))));
+                } else {
+                    tf.setBorder(Border.EMPTY);
+                }
             }
         });
     }
