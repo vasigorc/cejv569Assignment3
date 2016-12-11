@@ -40,3 +40,22 @@
     -fx-background-color: -fx-outer-border, -fx-inner-border, derive(-fx-color, -20%);
     -fx-effect: innershadow(two-pass-box , rgba(0,0,0,0.6) , 4, 0.0 , 0 , 0);
 }
+
+.saveBtn{
+    -fx-font-size: 105%;    
+    -fx-base: #5cb85c;
+    -fx-text-fill: #fff;
+    -fx-border-color: #4cae4c;
+    -fx-border-radius:8;
+    -fx-background-radius: 8;
+}
+
+.saveBtn:hover{
+    -fx-base: #449d44;
+    -fx-border-color: #398439;
+}
+
+.roundBtn{
+    -fx-border-radius:10;
+    -fx-background-radius: 10;
+}

@@ -32,7 +32,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
-import javaslang.Tuple2;
 import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -246,7 +245,8 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         ), currentIndex >= observableList.size());
     }
 
-    private void initializeListeners() {
+    @Override
+    public void initializeListeners() {
         //the "of" factorymethod for immutable collections will only become available
         //from JDK 9 - meanwhile we can use JavaSlang
         //set the observable for each element that has ONLY max constraints
@@ -255,7 +255,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 = of(Tuple.of(mvPatientLastName, 20, OptionalInt.of(2), of(mvSaveBtn)), 
                         Tuple.of(mvPatientFirstName, 15, OptionalInt.of(1), of(mvSaveBtn)));
         //and for each of the minMaxSizes
-        minMaxSizes.forEach(tuple -> CommonUtil.addTextLimiter(tuple._1(), tuple._2(), tuple._3, tuple._4));
+        minMaxSizes.forEach(CommonUtil::addTextLimiter);
         //for the name filter
         nameFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
             //we can only search by name or id, not both!

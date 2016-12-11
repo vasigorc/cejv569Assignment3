@@ -55,4 +55,6 @@ public abstract class AbstractTabController<R> {
     public abstract void bindMainView();
     
     public abstract void notifyListListeners();
+    
+    public abstract void initializeListeners();
 }

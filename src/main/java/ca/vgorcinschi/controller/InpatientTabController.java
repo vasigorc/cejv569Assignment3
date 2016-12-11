@@ -38,4 +38,9 @@ public class InpatientTabController extends AbstractTabController <Inpatient> im
     public void notifyListListeners() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void initializeListeners() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Function;
 import javafx.beans.value.ObservableValue;
@@ -19,12 +18,12 @@ import javafx.scene.Node;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
-import static javafx.scene.layout.BorderStroke.*;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javaslang.Tuple2;
+import javaslang.Tuple4;
 import javaslang.collection.List;
 import javaslang.control.Try;
 import org.slf4j.LoggerFactory;
@@ -94,12 +93,6 @@ public class CommonUtil {
     //set JavaFX TextField characters limit
     public static void addTextLimiter(final TextInputControl tf, final int maxLength) {
         addTextLimiter(tf, maxLength, OptionalInt.empty(), null);
-//        tf.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
-//            if (tf.getText().length() > maxLength) {
-//                String s = tf.getText().substring(0, maxLength);
-//                tf.setText(s);
-//            }
-//        });
     }
 
     public static void addTextLimiter(final TextInputControl tf, final int maxLength, OptionalInt minLength, List<Node> observers) {
@@ -117,6 +110,11 @@ public class CommonUtil {
                 }
             }
         });
+    }
+
+    //handy tuple implementation
+    public static void addTextLimiter(Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>> t) {
+        addTextLimiter(t._1, t._2, t._3, t._4);
     }
 
     //here the string 2 is the method
