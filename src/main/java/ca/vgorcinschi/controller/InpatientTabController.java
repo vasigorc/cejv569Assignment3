@@ -1,7 +1,13 @@
 package ca.vgorcinschi.controller;
 
+import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Inpatient;
+import ca.vgorcinschi.util.DozerMapper;
 import java.util.List;
+import javafx.fxml.FXML;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +18,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class InpatientTabController extends AbstractTabController <Inpatient> implements Command {
 
+    //wired DAO
+    @Autowired
+    PatientDBService service;
+
+    //bean that copies object properties
+    @Autowired
+    DozerMapper dozerMapper;
+    
+    private Inpatient currentInpatient;
+
+    public Inpatient getCurrentInpatient() {
+        return currentInpatient;
+    }
+
+    public void setCurrentInpatient(Inpatient currentInpatient) {
+        this.currentInpatient = currentInpatient;
+    }
+    
+    @FXML
+    TableView<Inpatient> medicationDataTable;
+    //data table columns
+    @FXML
+    TableColumn<Inpatient, Number> idColumn;
+    
     /**
      * Initializes the controller class.
      */
