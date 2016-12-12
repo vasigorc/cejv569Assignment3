@@ -1,5 +1,6 @@
 package ca.vgorcinschi.controller;
 
+import ca.vgorcinschi.components.DoubleField;
 import ca.vgorcinschi.controller.helpers.CurrencyBigDecimalConverter;
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Medication;
@@ -16,7 +17,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 import static java.time.format.FormatStyle.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.OptionalInt;
@@ -93,10 +93,10 @@ public class MedicationTabController extends AbstractTabController<Medication> i
     TextField mvMedName;
 
     @FXML
-    TextField mvMedUnitCost;
+    DoubleField mvMedUnitCost;
 
     @FXML
-    TextField mvUnits;
+    DoubleField mvUnits;
 
     @FXML
     JFXDatePicker mvMedicationDate;
@@ -142,7 +142,8 @@ public class MedicationTabController extends AbstractTabController<Medication> i
 
     @FXML
     public void newMedication() {
-        //TODO
+        setCurrentMedication(dozerMapper.dozer().map(defaultMedication(currentPatient.getPatientId()), Medication.class));
+        bindMainView();
     }
 
     @FXML

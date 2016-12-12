@@ -383,8 +383,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                 setCurrentPatient(dozerMapper.dozer().map(observableList.get(0), Patient.class));
             }
         }
-        mvRewind.setDisable(observableList.isEmpty());
-        mvForward.setDisable(observableList.isEmpty());
+        invokeBoolMethod(of(Tuple.of("setDisable", mvRewind), Tuple.of("setDisable", mvForward)), observableList.isEmpty());
     }
 
     @Override
