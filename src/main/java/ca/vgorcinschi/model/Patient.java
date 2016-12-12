@@ -14,16 +14,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- *this is the master record, db table PATIENT
- * 
+ * this is the master record, db table PATIENT
+ *
  * @author vgorcinschi
  */
-public class Patient implements Serializable{
-    
+public class Patient implements Serializable {
+
     //default patient
-    public static Patient DEFAULT_PATIENT = new Patient(0, "", "", "", 
+    public static Patient DEFAULT_PATIENT = new Patient(0, "", "", "",
             LocalDateTime.now(ZoneId.systemDefault()), LocalDateTime.now(ZoneId.systemDefault()));
-    
+
     //primary key
     private IntegerProperty patientId;
     //columns: "LASTNAME", "FIRSTNAME", "DIAGNOSIS"
@@ -56,7 +56,7 @@ public class Patient implements Serializable{
     /*
      constructor that initializes all fields with the exception of the lists;
      */
-    public Patient(int patientId, String lastName, String firstName, 
+    public Patient(int patientId, String lastName, String firstName,
             String diagnosis, LocalDateTime admissionDate, LocalDateTime releaseDate) {
         //call the default constructor first
         this();
@@ -66,6 +66,9 @@ public class Patient implements Serializable{
         this.diagnosis = new SimpleStringProperty(diagnosis);
         this.admissionDate = new SimpleObjectProperty<>(admissionDate);
         this.releaseDate = new SimpleObjectProperty<>(releaseDate);
+        inpatients = new ArrayList<>();
+        medications = new ArrayList<>();
+        surgicals = new ArrayList<>();
     }
 
     //getters and setters
@@ -76,8 +79,8 @@ public class Patient implements Serializable{
     public final void setPatientId(int patientId) {
         this.patientId.set(patientId);
     }
-    
-    public final IntegerProperty patientIdProperty(){
+
+    public final IntegerProperty patientIdProperty() {
         return patientId;
     }
 
@@ -88,8 +91,8 @@ public class Patient implements Serializable{
     public final void setLastName(String lastName) {
         this.lastName.set(lastName);
     }
-    
-    public final StringProperty lastNameProperty(){
+
+    public final StringProperty lastNameProperty() {
         return lastName;
     }
 
@@ -101,10 +104,10 @@ public class Patient implements Serializable{
         this.firstName.set(firstName);
     }
 
-    public final StringProperty firstNameProperty(){
+    public final StringProperty firstNameProperty() {
         return firstName;
     }
-    
+
     public final String getDiagnosis() {
         return diagnosis.get();
     }
@@ -125,10 +128,10 @@ public class Patient implements Serializable{
         this.diagnosis.set(diagnosis);
     }
 
-    public final StringProperty diagnosisProperty(){
+    public final StringProperty diagnosisProperty() {
         return diagnosis;
     }
-    
+
     public final LocalDateTime getAdmissionDate() {
         return admissionDate.get();
     }
@@ -136,8 +139,8 @@ public class Patient implements Serializable{
     public final void setAdmissionDate(LocalDateTime admissionDate) {
         this.admissionDate.set(admissionDate);
     }
-    
-    public final ObjectProperty<LocalDateTime> admissionDateProperty(){
+
+    public final ObjectProperty<LocalDateTime> admissionDateProperty() {
         return admissionDate;
     }
 
@@ -149,10 +152,12 @@ public class Patient implements Serializable{
         this.releaseDate.set(releaseDate);
     }
 
-    public final ObjectProperty<LocalDateTime> releaseDateProperty(){
+    public final ObjectProperty<LocalDateTime> releaseDateProperty() {
         return releaseDate;
     }
+
     //only getters, no setters for children lists
+
     public List<Inpatient> getInpatients() {
         return inpatients;
     }
@@ -221,10 +226,10 @@ public class Patient implements Serializable{
 
     @Override
     public String toString() {
-        return "Patient{" + "patientId=" + patientId.get()+ ", lastName=" + lastName.get()
-                + ", firstName=" + firstName.get() + ", diagnosis=" + 
-                diagnosis.get() + ", admissionDate=" + admissionDate.get() 
-                + ", releaseDate=" + releaseDate.get() + ", inpatients=" + 
-                inpatients + ", medications=" + medications + ", surgicals=" + surgicals + '}';
+        return "Patient{" + "patientId=" + patientId.get() + ", lastName=" + lastName.get()
+                + ", firstName=" + firstName.get() + ", diagnosis="
+                + diagnosis.get() + ", admissionDate=" + admissionDate.get()
+                + ", releaseDate=" + releaseDate.get() + ", inpatients="
+                + inpatients + ", medications=" + medications + ", surgicals=" + surgicals + '}';
     }
 }

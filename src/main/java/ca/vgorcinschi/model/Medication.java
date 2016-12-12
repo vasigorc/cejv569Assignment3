@@ -3,6 +3,7 @@ package ca.vgorcinschi.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -16,8 +17,8 @@ import javafx.beans.property.StringProperty;
  *
  * @author vgorcinschi
  */
-public class Medication implements Serializable, Identifiable {
-
+public class Medication implements Serializable, Identifiable {    
+    
     //primary key
     private IntegerProperty id;
     //foreign key
@@ -164,6 +165,11 @@ public class Medication implements Serializable, Identifiable {
             return false;
         }
         return Objects.equals(this.units.get(), other.units.get());
+    }
+    
+    public static Medication defaultMedication(int patientId){
+        return new Medication(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", BigDecimal.ZERO, BigDecimal.ZERO);
+
     }
 
     @Override

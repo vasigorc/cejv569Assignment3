@@ -57,4 +57,8 @@ public abstract class AbstractTabController<R> {
     public abstract void notifyListListeners();
     
     public abstract void initializeListeners();
+    
+    public abstract void onTableRowClickHandler();
+    
+    public abstract void bindTemporals(R r);
 }

@@ -36,7 +36,7 @@ public class MainController implements TabMediator {
 
     @Override
     public void reloadPatient() {
-        patientTabController.getService().savePatient(patientTabController.getCurrentPatient());
+        //patientTabController.getService().savePatient(patientTabController.getCurrentPatient());
         patientTabController.updateTable(null);
         updatePatient();
     }    

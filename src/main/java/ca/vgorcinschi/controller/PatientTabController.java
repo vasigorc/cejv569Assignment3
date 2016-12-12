@@ -36,6 +36,7 @@ import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
+import static java.util.Optional.*;
 import java.util.OptionalInt;
 import javafx.scene.Node;
 import javaslang.Tuple4;
@@ -252,7 +253,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         //set the observable for each element that has ONLY max constraints
         of(Tuple.of(mvPatientDiagnosis, 100)).forEach(tuple -> CommonUtil.addTextLimiter(tuple._1(), tuple._2()));
         javaslang.collection.List<Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>>> minMaxSizes
-                = of(Tuple.of(mvPatientLastName, 20, OptionalInt.of(2), of(mvSaveBtn)), 
+                = of(Tuple.of(mvPatientLastName, 20, OptionalInt.of(2), of(mvSaveBtn)),
                         Tuple.of(mvPatientFirstName, 15, OptionalInt.of(1), of(mvSaveBtn)));
         //and for each of the minMaxSizes
         minMaxSizes.forEach(CommonUtil::addTextLimiter);
@@ -316,32 +317,34 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         bindTemporals(picked);
     }
 
-    private void bindTemporals(Patient picked) {
+    @Override
+    public void bindTemporals(Patient r) {
         //composite bindings for admission date
-        ObjectProperty<LocalDate> admDate = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalDate());
+        ObjectProperty<LocalDate> admDate = new SimpleObjectProperty<>(r.getAdmissionDate().toLocalDate());
         admDate.addListener((arg0, oldValue, newValue) -> {
-            picked.setAdmissionDate(LocalDateTime.of(newValue, picked.getAdmissionDate().toLocalTime()));
+            r.setAdmissionDate(LocalDateTime.of(newValue, r.getAdmissionDate().toLocalTime()));
         });
-        ObjectProperty<LocalTime> admTime = new SimpleObjectProperty<>(picked.getAdmissionDate().toLocalTime());
+        ObjectProperty<LocalTime> admTime = new SimpleObjectProperty<>(r.getAdmissionDate().toLocalTime());
         admTime.addListener((arg0, oldValue, newValue) -> {
-            picked.setAdmissionDate(LocalDateTime.of(picked.getAdmissionDate().toLocalDate(), newValue));
+            r.setAdmissionDate(LocalDateTime.of(r.getAdmissionDate().toLocalDate(), newValue));
         });
         Bindings.bindBidirectional(mvPatientAdmDate.valueProperty(), admDate);
         Bindings.bindBidirectional(mvPatientAdmTime.timeProperty(), admTime);
         //composite bindings for release date
-        ObjectProperty<LocalDate> relDate = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalDate());
+        ObjectProperty<LocalDate> relDate = new SimpleObjectProperty<>(r.getReleaseDate().toLocalDate());
         relDate.addListener((arg0, oldValue, newValue) -> {
-            picked.setReleaseDate(LocalDateTime.of(newValue, picked.getReleaseDate().toLocalTime()));
+            r.setReleaseDate(LocalDateTime.of(newValue, r.getReleaseDate().toLocalTime()));
         });
-        ObjectProperty<LocalTime> relTime = new SimpleObjectProperty<>(picked.getReleaseDate().toLocalTime());
+        ObjectProperty<LocalTime> relTime = new SimpleObjectProperty<>(r.getReleaseDate().toLocalTime());
         relTime.addListener((arg0, oldValue, newValue) -> {
-            picked.setReleaseDate(LocalDateTime.of(picked.getReleaseDate().toLocalDate(), newValue));
+            r.setReleaseDate(LocalDateTime.of(r.getReleaseDate().toLocalDate(), newValue));
         });
         Bindings.bindBidirectional(mvPatientRelDate.valueProperty(), relDate);
         Bindings.bindBidirectional(mvPatientRelTime.timeProperty(), relTime);
     }
 
-    private void onTableRowClickHandler() {
+    @Override
+    public void onTableRowClickHandler() {
         //set a row factory for the table view
         patientDataTable.setRowFactory(table -> {
             //a row of records
@@ -351,6 +354,7 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
                     Patient clickedRow = row.getItem();
                     //set new current patient and bind it to the main view
                     setCurrentPatient(dozerMapper.dozer().map(clickedRow, Patient.class));
+                    execute();
                     bindMainView();
                 }
             });
@@ -366,8 +370,18 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
          * is failry useless, we're binding the events manually
          */
         if (!observableList.isEmpty()) {//only if there isn't an arrayindexoutofbound
-            //put a COPY! of the first patient to out main view
-            setCurrentPatient(dozerMapper.dozer().map(observableList.get(0), Patient.class));
+            //do not reset the main view if the current patient is in the list
+            //especially useful for detail tabs
+            Optional<Patient> optional = empty();
+            if (currentPatient != null) {
+                optional = observableList.stream()
+                        .filter(p -> p.getPatientId() == currentPatient.getPatientId()).findFirst();
+            }
+            if (optional.isPresent()) {
+                setCurrentPatient(dozerMapper.dozer().map(optional.get(), Patient.class));
+            } else {
+                setCurrentPatient(dozerMapper.dozer().map(observableList.get(0), Patient.class));
+            }
         }
         mvRewind.setDisable(observableList.isEmpty());
         mvForward.setDisable(observableList.isEmpty());
@@ -375,9 +389,9 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
 
     @Override
     public void setCurrentPatient(Patient currentPatient) {
-        super.setCurrentPatient(currentPatient); 
-        if (getMediator()!=null) {//all tabs are initialized and are ready to listen to changes
+        super.setCurrentPatient(currentPatient);
+        if (getMediator() != null) {//all tabs are initialized and are ready to listen to changes
             execute();
         }
-    }   
+    }
 }
