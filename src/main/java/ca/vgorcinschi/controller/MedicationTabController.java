@@ -149,28 +149,46 @@ public class MedicationTabController extends AbstractTabController<Medication> i
     @FXML
     public void saveMedication() {
         if (service.saveDetailRecord(currentMedication)) {
-            mediator.reloadPatient();
+            execute();
         }
     }
 
     @FXML
     public void deleteMedication() {
-        //TODO
+        if (service.deleteDetailRecord(currentMedication)) {
+            execute();
+        }
     }
 
     @FXML
     public void rewindMedication() {
-        //TODO
+        int currentIndex = currentMainViewIndex(medication -> currentMedication.getId() == medication.getId());
+        if (currentIndex > 0) {
+            setCurrentMedication(dozerMapper.dozer().map(observableList.get(currentIndex - 1), Medication.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvRewind)
+        ), currentIndex <= 0);
     }
 
     @FXML
     public void forwardMedication() {
-        //TODO
+        int currentIndex = currentMainViewIndex(medication -> currentMedication.getId() == medication.getId());
+        if (currentIndex < (observableList.size()-1)) {
+            setCurrentMedication(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Medication.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvForward)
+        ), currentIndex >= (observableList.size()-1));
     }
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        mediator.reloadPatient();
     }
 
     @Override

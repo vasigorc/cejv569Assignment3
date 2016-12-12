@@ -236,14 +236,14 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     @FXML
     public void forwardPatient() {
         int currentIndex = currentMainViewIndex(patient -> currentPatient.getPatientId() == patient.getPatientId());
-        if (currentIndex < observableList.size()) {
+        if (currentIndex < (observableList.size()-1)) {
             setCurrentPatient(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Patient.class));
             bindMainView();
         }
         //en-/disable the rewind button based on the current index
         invokeBoolMethod(javaslang.collection.List.of(
-                Tuple.of("setDisable", mvRewind)
-        ), currentIndex >= observableList.size());
+                Tuple.of("setDisable", mvForward)
+        ), currentIndex >= (observableList.size()-1));
     }
 
     @Override
