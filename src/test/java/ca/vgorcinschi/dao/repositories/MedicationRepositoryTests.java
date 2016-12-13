@@ -5,6 +5,7 @@
  */
 package ca.vgorcinschi.dao.repositories;
 
+import ca.vgorcinschi.App;
 import ca.vgorcinschi.IntegrationTestConfig;
 import ca.vgorcinschi.model.Medication;
 import static java.math.BigDecimal.valueOf;
@@ -30,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author v_gorcin
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IntegrationTestConfig.class)
+@SpringBootTest(classes = App.class)
 public class MedicationRepositoryTests {
 
     //this test class' logger

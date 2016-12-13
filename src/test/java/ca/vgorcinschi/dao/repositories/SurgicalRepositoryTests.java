@@ -1,6 +1,6 @@
 package ca.vgorcinschi.dao.repositories;
 
-import ca.vgorcinschi.IntegrationTestConfig;
+import ca.vgorcinschi.App;
 import ca.vgorcinschi.model.Surgical;
 import static java.math.BigDecimal.*;
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author v_gorcin
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IntegrationTestConfig.class)
+@SpringBootTest(classes = App.class)
 public class SurgicalRepositoryTests {
 
     //this test class' logger

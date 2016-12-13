@@ -269,15 +269,15 @@ public class MedicationTabController extends AbstractTabController<Medication> i
         if (r.getDateOfMedication() == null) {//unfortunatelly we cannot bind to null
             r.setDateOfMedication(LocalDateTime.now(ZoneId.systemDefault()));
         }
-        ObjectProperty<LocalDate> admDate = new SimpleObjectProperty<>(r.getDateOfMedication().toLocalDate());
-        admDate.addListener((arg0, oldValue, newValue) -> {
+        ObjectProperty<LocalDate> medDate = new SimpleObjectProperty<>(r.getDateOfMedication().toLocalDate());
+        medDate.addListener((arg0, oldValue, newValue) -> {
             r.setDateOfMedication(LocalDateTime.of(newValue, r.getDateOfMedication().toLocalTime()));
         });
-        ObjectProperty<LocalTime> admTime = new SimpleObjectProperty<>(r.getDateOfMedication().toLocalTime());
-        admTime.addListener((arg0, oldValue, newValue) -> {
+        ObjectProperty<LocalTime> medTime = new SimpleObjectProperty<>(r.getDateOfMedication().toLocalTime());
+        medTime.addListener((arg0, oldValue, newValue) -> {
             r.setDateOfMedication(LocalDateTime.of(r.getDateOfMedication().toLocalDate(), newValue));
         });
-        Bindings.bindBidirectional(mvMedicationDate.valueProperty(), admDate);
-        Bindings.bindBidirectional(mvMedicationTime.timeProperty(), admTime);
+        Bindings.bindBidirectional(mvMedicationDate.valueProperty(), medDate);
+        Bindings.bindBidirectional(mvMedicationTime.timeProperty(), medTime);
     }
 }

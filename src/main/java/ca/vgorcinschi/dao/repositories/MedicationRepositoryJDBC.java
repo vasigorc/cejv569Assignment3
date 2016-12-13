@@ -4,9 +4,13 @@ import static ca.vgorcinschi.util.CommonUtil.localToSql;
 import ca.vgorcinschi.dao.repositories.helpers.MedicationBatchPreparedStatementSetter;
 import ca.vgorcinschi.dao.repositories.helpers.MedicationPreparedStatementSetter;
 import ca.vgorcinschi.model.Medication;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +144,7 @@ public class MedicationRepositoryJDBC implements MedicationRepository {
             //I think this is an optimal implementations of the use of TransactionTemplate 
             //with BatchPreparedStatementSetter - see also Inpatient & Surgical RepositoryJDBCs
             return transactionTemplate.execute((TransactionStatus transactionStatus) -> {
-                int[] arrayOfaffectedRows = jdbcTemplate.batchUpdate(updatePreparedStatement, 
+                int[] arrayOfaffectedRows = jdbcTemplate.batchUpdate(updatePreparedStatement,
                         new MedicationBatchPreparedStatementSetter(entities));
                 //Did every query update only one row in the DB?
                 if (Arrays.stream(arrayOfaffectedRows).allMatch(i -> i == 1)) {
@@ -161,13 +165,17 @@ public class MedicationRepositoryJDBC implements MedicationRepository {
 
     @Override
     public List<Medication> getPatientDetails(int patientId) {
-         //the prepared statement
+        //the prepared statement
         String sql = "SELECT * FROM MEDICATION WHERE PATIENTID = ?";
         //create an empty List of Surgical's
         List<Medication> medications = new ArrayList<>();
-        //auto mapping the db columns to data bean properties: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/BeanPropertyRowMapper.html
-        medications = jdbcTemplate.query(sql, 
-                BeanPropertyRowMapper.newInstance(Medication.class), patientId);
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, patientId);
+        rows.stream().forEach((row) -> {
+            Medication m = new Medication((int) row.get("ID"), (int) row.get("PATIENTID"),
+                    ((Timestamp) row.get("DATEOFMED")).toLocalDateTime(), (String) row.get("MED"),
+                    (BigDecimal) row.get("UNITCOST"), (BigDecimal) row.get("UNITS"));
+            medications.add(m);
+        });
         return medications;
     }
 }

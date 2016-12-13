@@ -7,12 +7,16 @@ package ca.vgorcinschi.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.function.Function;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.TextInputControl;
@@ -90,6 +94,16 @@ public class CommonUtil {
         return null;
     };
 
+    public static void doubleListener(final TextInputControl tf) {
+        tf.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
+            //if number is not a decimal -> clear the field
+            Try<Double> attempt = Try.of(() -> Double.parseDouble(tf.getText()));
+            if (!attempt.isSuccess()) {
+                Platform.runLater(() -> tf.clear());
+            }
+        });
+    }
+
     //set JavaFX TextField characters limit
     public static void addTextLimiter(final TextInputControl tf, final int maxLength) {
         addTextLimiter(tf, maxLength, OptionalInt.empty(), null);
@@ -111,7 +125,7 @@ public class CommonUtil {
             }
         });
     }
-    
+
     //handy tuple implementation
     public static void addTextLimiter(Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>> t) {
         addTextLimiter(t._1, t._2, t._3, t._4);
