@@ -3,6 +3,8 @@ package ca.vgorcinschi.controller;
 import ca.vgorcinschi.controller.helpers.CurrencyBigDecimalConverter;
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Inpatient;
+import static ca.vgorcinschi.model.Inpatient.defaultInpatient;
+import ca.vgorcinschi.model.Patient;
 import ca.vgorcinschi.util.CommonUtil;
 import ca.vgorcinschi.util.DozerMapper;
 import com.jfoenix.controls.JFXDatePicker;
@@ -14,14 +16,17 @@ import static java.time.format.FormatStyle.SHORT;
 import java.util.List;
 import java.util.Locale;
 import java.util.OptionalInt;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
 import javaslang.Tuple4;
@@ -56,7 +61,7 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
     }
 
     @FXML
-    TableView<Inpatient> medicationDataTable;
+    TableView<Inpatient> inpatientDataTable;
     //data table columns
     @FXML
     TableColumn<Inpatient, Number> idColumn;
@@ -70,29 +75,29 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
     TableColumn<Inpatient, BigDecimal> suppliesColumn;
     @FXML
     TableColumn<Inpatient, BigDecimal> servicesColumn;
-    
+
     //Main view bindings
     @FXML
     TextField mvInpatientID;
-    
+
     @FXML
     TextField mvRoomNumber;
-    
+
     @FXML
     TextField mvDailyRate;
-    
+
     @FXML
     TextField mvSupplies;
-    
+
     @FXML
     TextField mvServices;
-    
+
     @FXML
     JFXDatePicker mvDateOfInpatient;
 
     @FXML
     JFXDatePicker mvTimeOfInpatient;
-    
+
     @FXML
     Button mvAddBtn;
 
@@ -147,14 +152,14 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
     public void saveInpatient() {
         //TODO
     }
-    
+
     @FXML
-    public void rewindInpatient(){
+    public void rewindInpatient() {
         //TODO
     }
-    
+
     @FXML
-    public void forwardInpatient(){
+    public void forwardInpatient() {
         //TODO
     }
 
@@ -165,7 +170,10 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
 
     @Override
     public void populateTableView(List<Inpatient> list) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        observableList = FXCollections.observableArrayList(list);
+        inpatientDataTable.setItems(observableList);
+        notifyListListeners();
+        //bindMainView();
     }
 
     @Override
@@ -175,7 +183,12 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
 
     @Override
     public void notifyListListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!observableList.isEmpty()) {//only if there isn't an arrayindexoutofbound
+            currentInpatient = dozerMapper.dozer().map(observableList.get(0), Inpatient.class);
+        } else {
+            //if the patient doesn't have an inpatient, set the current to a new one
+            currentInpatient = dozerMapper.dozer().map(defaultInpatient(currentPatient.getPatientId()), Inpatient.class);
+        }
     }
 
     @Override
@@ -189,15 +202,37 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
         minMaxSizes.forEach(CommonUtil::addTextLimiter);
         //only double fields
         of(mvServices, mvSupplies, mvDailyRate).forEach(CommonUtil::doubleListener);
+        onTableRowClickHandler();
     }
 
     @Override
     public void onTableRowClickHandler() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //set a row factory for the table view
+        inpatientDataTable.setRowFactory(table -> {
+            //a row of records
+            TableRow<Inpatient> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
+                    Inpatient clickedRow = row.getItem();
+                    //set new current patient and bind it to the main view
+                    setCurrentInpatient(dozerMapper.dozer().map(clickedRow, Inpatient.class));
+                    //TODO bindMainView();
+                }
+            });
+            return row;
+        });
     }
 
     @Override
     public void bindTemporals(Inpatient r) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void setCurrentPatient(Patient currentPatient) {
+        super.setCurrentPatient(currentPatient); //To change body of generated methods, choose Tools | Templates.        
+        populateTableView(getCurrentPatient().getInpatients());
+    }
+    
+    
 }

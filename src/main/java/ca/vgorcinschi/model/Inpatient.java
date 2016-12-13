@@ -3,6 +3,7 @@ package ca.vgorcinschi.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -181,6 +182,10 @@ public class Inpatient implements Serializable, Identifiable {
             return false;
         }
         return Objects.equals(this.services.get(), other.services.get());
+    }
+
+    public static Inpatient defaultInpatient(int patientId) {
+        return new Inpatient(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     @Override

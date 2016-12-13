@@ -24,6 +24,7 @@ public class MainController implements TabMediator {
         //plug-in the mediator to all tabs
         patientTabController.setMediator(this);
         medicationTabController.setMediator(this);
+        inpatientTabController.setMediator(this);
         updatePatient();
     }    
 
