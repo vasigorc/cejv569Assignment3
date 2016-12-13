@@ -265,7 +265,7 @@ public class MedicationTabController extends AbstractTabController<Medication> i
 
     @Override
     public void bindTemporals(Medication r) {
-        //composite bindings for medication date
+        //composite bindings for the medication date
         if (r.getDateOfMedication() == null) {//unfortunatelly we cannot bind to null
             r.setDateOfMedication(LocalDateTime.now(ZoneId.systemDefault()));
         }

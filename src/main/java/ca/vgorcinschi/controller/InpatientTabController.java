@@ -6,16 +6,23 @@ import ca.vgorcinschi.model.Inpatient;
 import static ca.vgorcinschi.model.Inpatient.defaultInpatient;
 import ca.vgorcinschi.model.Patient;
 import ca.vgorcinschi.util.CommonUtil;
+import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
 import ca.vgorcinschi.util.DozerMapper;
 import com.jfoenix.controls.JFXDatePicker;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
 import java.util.List;
 import java.util.Locale;
 import java.util.OptionalInt;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -27,6 +34,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
+import javafx.util.converter.BigDecimalStringConverter;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
 import javaslang.Tuple4;
@@ -140,32 +148,53 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
 
     @FXML
     public void newInpatient() {
-        //TODO
+        setCurrentInpatient(dozerMapper.dozer().map(defaultInpatient(currentPatient.getPatientId()), Inpatient.class));
+        bindMainView();
     }
 
     @FXML
     public void deleteInpatient() {
-        //TODO
+        if (service.deleteDetailRecord(currentInpatient)) {
+            execute();
+        }
     }
 
     @FXML
     public void saveInpatient() {
-        //TODO
+        if (service.saveDetailRecord(currentInpatient)) {
+            execute();
+        }
     }
 
     @FXML
     public void rewindInpatient() {
-        //TODO
+        int currentIndex = currentMainViewIndex(inpatient -> currentInpatient.getId() == inpatient.getId());
+        if (currentIndex > 0) {
+            setCurrentInpatient(dozerMapper.dozer().map(observableList.get(currentIndex - 1), Inpatient.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvRewind)
+        ), currentIndex <= 0);
     }
 
     @FXML
     public void forwardInpatient() {
-        //TODO
+        int currentIndex = currentMainViewIndex(patient -> currentInpatient.getId() == patient.getId());
+        if (currentIndex < (observableList.size() - 1)) {
+            setCurrentInpatient(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Inpatient.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvForward)
+        ), currentIndex >= (observableList.size() - 1));
     }
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        mediator.reloadPatient();
     }
 
     @Override
@@ -173,12 +202,26 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
         observableList = FXCollections.observableArrayList(list);
         inpatientDataTable.setItems(observableList);
         notifyListListeners();
-        //bindMainView();
+        bindMainView();
     }
 
     @Override
     public void bindMainView() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //a new medication or the one that is chosen
+        Inpatient inpatient = (getCurrentInpatient() == null) ? defaultInpatient(getCurrentPatient().getPatientId())
+                : getCurrentInpatient();
+        //disable the delete, forward and rewind buttons if we create a new medication
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvDeleteBtn),
+                Tuple.of("setDisable", mvForward),
+                Tuple.of("setDisable", mvRewind)
+        ), inpatient.getId() == 0);
+        mvInpatientID.textProperty().bind(inpatient.idProperty().asString());
+        Bindings.bindBidirectional(mvRoomNumber.textProperty(), inpatient.roomNumberProperty());
+        mvDailyRate.textProperty().bindBidirectional(inpatient.dailyRateProperty(), new BigDecimalStringConverter());
+        mvServices.textProperty().bindBidirectional(inpatient.servicesProperty(), new BigDecimalStringConverter());
+        mvSupplies.textProperty().bindBidirectional(inpatient.suppliesProperty(), new BigDecimalStringConverter());
+        bindTemporals(inpatient);
     }
 
     @Override
@@ -216,7 +259,7 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
                     Inpatient clickedRow = row.getItem();
                     //set new current patient and bind it to the main view
                     setCurrentInpatient(dozerMapper.dozer().map(clickedRow, Inpatient.class));
-                    //TODO bindMainView();
+                    bindMainView();
                 }
             });
             return row;
@@ -225,7 +268,20 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
 
     @Override
     public void bindTemporals(Inpatient r) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //composite bindings for the inpatient date
+        if (r.getDateOfStay() == null) {//unfortunatelly we cannot bind to null
+            r.setDateOfStay(LocalDateTime.now(ZoneId.systemDefault()));
+        }
+        ObjectProperty<LocalDate> inpatientDate = new SimpleObjectProperty<>(r.getDateOfStay().toLocalDate());
+        inpatientDate.addListener((arg0, oldValue, newValue) -> {
+            r.setDateOfStay(LocalDateTime.of(newValue, r.getDateOfStay().toLocalTime()));
+        });
+        ObjectProperty<LocalTime> inpatientTime = new SimpleObjectProperty<>(r.getDateOfStay().toLocalTime());
+        inpatientTime.addListener((arg0, oldValue, newValue) -> {
+            r.setDateOfStay(LocalDateTime.of(r.getDateOfStay().toLocalDate(), newValue));
+        });
+        Bindings.bindBidirectional(mvDateOfInpatient.valueProperty(), inpatientDate);
+        Bindings.bindBidirectional(mvTimeOfInpatient.timeProperty(), inpatientTime);
     }
 
     @Override
@@ -233,6 +289,5 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
         super.setCurrentPatient(currentPatient); //To change body of generated methods, choose Tools | Templates.        
         populateTableView(getCurrentPatient().getInpatients());
     }
-    
-    
+
 }
