@@ -2,6 +2,7 @@ package ca.vgorcinschi.controller;
 
 import ca.vgorcinschi.model.Surgical;
 import java.util.List;
+import javafx.fxml.FXML;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,7 @@ public class SurgicalTabController extends AbstractTabController <Surgical> impl
     /**
      * Initializes the controller class.
      */
+    @FXML
     public void initialize() {
         // TODO
     }    
@@ -22,7 +24,32 @@ public class SurgicalTabController extends AbstractTabController <Surgical> impl
     @Override
     public void execute() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }   
+    }
+    
+    @FXML
+    public void newSurgical(){
+        //TODO
+    }
+    
+    @FXML
+    public void deleteSurgical(){
+        //TODO
+    }
+    
+    @FXML
+    public void saveSurgical(){
+        //TODO
+    }
+    
+    @FXML
+    public void rewindSurgical(){
+        //TODO
+    }
+    
+    @FXML
+    public void forwardSurgical(){
+        //TODO
+    }
 
     @Override
     public void populateTableView(List<Surgical> list) {

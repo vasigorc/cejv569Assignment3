@@ -1,6 +1,5 @@
 package ca.vgorcinschi.controller;
 
-import ca.vgorcinschi.components.DoubleField;
 import ca.vgorcinschi.controller.helpers.CurrencyBigDecimalConverter;
 import ca.vgorcinschi.dao.PatientDBService;
 import ca.vgorcinschi.model.Medication;
@@ -23,7 +22,6 @@ import java.util.OptionalInt;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

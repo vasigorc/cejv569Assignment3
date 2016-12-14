@@ -3,6 +3,7 @@ package ca.vgorcinschi.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -182,6 +183,10 @@ public class Surgical implements Serializable, Identifiable {
             return false;
         }
         return Objects.equals(this.supplies.get(), other.supplies.get());
+    }
+    
+    public static Surgical defaultInpatient(int patientId) {
+        return new Surgical(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", null, null, null);
     }
 
     @Override

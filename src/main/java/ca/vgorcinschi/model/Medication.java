@@ -168,7 +168,7 @@ public class Medication implements Serializable, Identifiable {
     }
     
     public static Medication defaultMedication(int patientId){
-        return new Medication(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", BigDecimal.ZERO, BigDecimal.ZERO);
+        return new Medication(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", null, null);
     }
 
     @Override
