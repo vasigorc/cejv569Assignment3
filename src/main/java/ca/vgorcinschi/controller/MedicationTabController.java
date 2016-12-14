@@ -93,10 +93,10 @@ public class MedicationTabController extends AbstractTabController<Medication> i
     TextField mvMedName;
 
     @FXML
-    DoubleField mvMedUnitCost;
+    TextField mvMedUnitCost;
 
     @FXML
-    DoubleField mvUnits;
+    TextField mvUnits;
 
     @FXML
     JFXDatePicker mvMedicationDate;
@@ -242,8 +242,9 @@ public class MedicationTabController extends AbstractTabController<Medication> i
                         Tuple.of(mvMedUnitCost, 10, OptionalInt.of(1)),
                         Tuple.of(mvUnits, 3, OptionalInt.of(1)));
         minMaxSizes.forEach(CommonUtil::addTextLimiter);
+        of(mvMedUnitCost, mvUnits).forEach(CommonUtil::doubleListener);
         //save button should only appear if all the fields meet the criteria
-        mvSaveBtn.disableProperty().bind(Bindings.or(mvMedName.textProperty().lessThan(new SimpleStringProperty("aaaa")),
+        mvSaveBtn.disableProperty().bind(Bindings.or(mvMedName.textProperty().isEmpty(),
                 mvMedUnitCost.textProperty().isEmpty()).or(mvUnits.textProperty().isEmpty()));
         onTableRowClickHandler();
     }

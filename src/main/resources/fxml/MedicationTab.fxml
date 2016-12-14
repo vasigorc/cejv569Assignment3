@@ -67,12 +67,12 @@
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                        <DoubleField fx:id="mvMedUnitCost" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                        <TextField fx:id="mvMedUnitCost" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                         <Label text="%nrUnits" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                        <DoubleField fx:id="mvUnits" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <TextField fx:id="mvUnits" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                         <Label text="%dateOfMedication" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets right="10.0" />
