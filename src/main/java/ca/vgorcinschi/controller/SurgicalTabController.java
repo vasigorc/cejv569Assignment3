@@ -6,10 +6,14 @@ import ca.vgorcinschi.model.Patient;
 import ca.vgorcinschi.model.Surgical;
 import static ca.vgorcinschi.model.Surgical.defaultSurgical;
 import ca.vgorcinschi.util.CommonUtil;
+import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
 import ca.vgorcinschi.util.DozerMapper;
 import com.jfoenix.controls.JFXDatePicker;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
 import static java.time.format.FormatStyle.MEDIUM;
 import static java.time.format.FormatStyle.SHORT;
@@ -17,6 +21,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.OptionalInt;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,6 +34,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
+import javafx.util.converter.BigDecimalStringConverter;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
 import javaslang.Tuple3;
@@ -83,13 +90,13 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
     @FXML
     TextField mvSurgicalID;
     @FXML
-    TextField mvSurgery;
+    TextArea mvSurgery;
     @FXML
     TextField mvRoomFee;
     @FXML
     TextField mvSurgeonFee;
     @FXML
-    TextArea mvSuppliesFee;
+    TextField mvSuppliesFee;
     @FXML
     JFXDatePicker mvSurgicalDate;
     @FXML
@@ -163,12 +170,26 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
         observableList = FXCollections.observableArrayList(list);
         surgicalDataTable.setItems(observableList);
         notifyListListeners();
-        //bindMainView();
+        bindMainView();
     }
 
     @Override
     public void bindMainView() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //a new medication or the one that is chosen
+        Surgical surgical = (getCurrentSurgical()== null) ? defaultSurgical(getCurrentPatient().getPatientId())
+                : getCurrentSurgical();
+        //disable the delete, forward and rewind buttons if we create a new medication
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvDeleteBtn),
+                Tuple.of("setDisable", mvForward),
+                Tuple.of("setDisable", mvRewind)
+        ), surgical.getId() == 0);
+        mvSurgicalID.textProperty().bind(surgical.idProperty().asString());
+        Bindings.bindBidirectional(mvSurgery.textProperty(), surgical.surgeryProperty());
+        mvRoomFee.textProperty().bindBidirectional(surgical.roomFeeProperty(), new BigDecimalStringConverter());
+        mvSuppliesFee.textProperty().bindBidirectional(surgical.suppliesProperty(), new BigDecimalStringConverter());
+        mvSurgeonFee.textProperty().bindBidirectional(surgical.surgeonFeeProperty(), new BigDecimalStringConverter());
+        bindTemporals(surgical);
     }
 
     @Override
@@ -219,7 +240,20 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
 
     @Override
     public void bindTemporals(Surgical r) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //composite bindings for the inpatient date
+        if (r.getDateOfSurgery()== null) {//unfortunatelly we cannot bind to null
+            r.setDateOfSurgery(LocalDateTime.now(ZoneId.systemDefault()));
+        }
+        ObjectProperty<LocalDate> surgicalDate = new SimpleObjectProperty<>(r.getDateOfSurgery().toLocalDate());
+        surgicalDate.addListener((arg0, oldValue, newValue) -> {
+            r.setDateOfSurgery(LocalDateTime.of(newValue, r.getDateOfSurgery().toLocalTime()));
+        });
+        ObjectProperty<LocalTime> surgicalTime = new SimpleObjectProperty<>(r.getDateOfSurgery().toLocalTime());
+        surgicalTime.addListener((arg0, oldValue, newValue) -> {
+            r.setDateOfSurgery(LocalDateTime.of(r.getDateOfSurgery().toLocalDate(), newValue));
+        });
+        Bindings.bindBidirectional(mvSurgicalDate.valueProperty(), surgicalDate);
+        Bindings.bindBidirectional(mvSurgicalTime.timeProperty(), surgicalTime);
     }
 
     @Override

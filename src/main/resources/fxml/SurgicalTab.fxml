@@ -48,6 +48,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <VBox.margin>
                         <Insets top="10.0" />
@@ -65,23 +66,23 @@
                               <TextField fx:id="mvRoomFee" prefWidth="80.0" />
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                  <HBox spacing="10.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="2">
                      <children>
-                              <Label text="%inpatientSupplies" />
-                        <TextArea fx:id="mvSuppliesFee" prefHeight="200.0" prefWidth="200.0" />
+                              <Label text="%surgery" />
+                        <TextArea fx:id="mvSurgery" prefHeight="56.0" prefWidth="200.0" />
                      </children>
                      <GridPane.margin>
                         <Insets left="25.0" />
                      </GridPane.margin>
                   </HBox>
-                        <Label prefHeight="0.0" prefWidth="110.0" text="%dateOfSurgery" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                        <Label prefHeight="0.0" prefWidth="110.0" text="%dateOfSurgery" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                             <GridPane.margin>
                                 <Insets right="10.0" />
                             </GridPane.margin>
                         </Label>
-                        <JFXDatePicker fx:id="mvSurgicalDate" defaultColor="#086883" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <JFXDatePicker fx:id="mvSurgicalTime" defaultColor="#8f0022" showTime="true" showWeekNumbers="true" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Button fx:id="mvAddBtn" mnemonicParsing="false" onAction="#newSurgical" prefHeight="26.0" prefWidth="60.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                        <JFXDatePicker fx:id="mvSurgicalDate" defaultColor="#086883" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <JFXDatePicker fx:id="mvSurgicalTime" defaultColor="#8f0022" showTime="true" showWeekNumbers="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Button fx:id="mvAddBtn" mnemonicParsing="false" onAction="#newSurgical" prefHeight="26.0" prefWidth="60.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -93,7 +94,7 @@
                                 <Insets bottom="7.0" right="7.0" />
                             </padding>
                         </Button>
-                        <Button fx:id="mvDeleteBtn" mnemonicParsing="false" onAction="#deleteSurgical" prefHeight="28.0" prefWidth="62.0" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                        <Button fx:id="mvDeleteBtn" mnemonicParsing="false" onAction="#deleteSurgical" prefHeight="28.0" prefWidth="62.0" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                             <graphic>
                                 <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -102,12 +103,12 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="mvSaveBtn" mnemonicParsing="false" onAction="#saveSurgical" prefHeight="28.0" prefWidth="100.0" styleClass="saveBtn" text="%mvSaveBtn" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                        <Button fx:id="mvSaveBtn" mnemonicParsing="false" onAction="#saveSurgical" prefHeight="28.0" prefWidth="100.0" styleClass="saveBtn" text="%mvSaveBtn" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                         </Button>
-                        <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                        <HBox alignment="TOP_CENTER" spacing="10.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
                             <children>
                                 <Button fx:id="mvRewind" mnemonicParsing="false" onAction="#rewindSurgical" styleClass="roundBtn">
                                     <graphic>
@@ -129,10 +130,10 @@
                                 </Button>
                             </children>
                         </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="2" GridPane.columnSpan="2">
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
                      <children>
-                              <Label text="%surgery" />
-                              <TextField fx:id="mvSurgery" />
+                              <Label text="%inpatientSupplies" />
+                              <TextField fx:id="mvSuppliesFee" prefWidth="80.0" />
                      </children>
                      <GridPane.margin>
                         <Insets left="25.0" />
