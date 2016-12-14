@@ -185,7 +185,7 @@ public class Inpatient implements Serializable, Identifiable {
     }
 
     public static Inpatient defaultInpatient(int patientId) {
-        return new Inpatient(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+        return new Inpatient(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", null, null, null);
     }
 
     @Override

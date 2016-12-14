@@ -23,9 +23,9 @@ import java.util.OptionalInt;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -37,7 +37,7 @@ import javafx.scene.input.MouseButton;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
-import javaslang.Tuple4;
+import javaslang.Tuple3;
 import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -176,14 +176,14 @@ public class MedicationTabController extends AbstractTabController<Medication> i
     @FXML
     public void forwardMedication() {
         int currentIndex = currentMainViewIndex(medication -> currentMedication.getId() == medication.getId());
-        if (currentIndex < (observableList.size()-1)) {
+        if (currentIndex < (observableList.size() - 1)) {
             setCurrentMedication(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Medication.class));
             bindMainView();
         }
         //en-/disable the rewind button based on the current index
         invokeBoolMethod(javaslang.collection.List.of(
                 Tuple.of("setDisable", mvForward)
-        ), currentIndex >= (observableList.size()-1));
+        ), currentIndex >= (observableList.size() - 1));
     }
 
     @Override
@@ -237,11 +237,14 @@ public class MedicationTabController extends AbstractTabController<Medication> i
     @Override
     public void initializeListeners() {
         //set the observables for elements that have min and max length constraints
-        javaslang.collection.List<Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>>> minMaxSizes
-                = of(Tuple.of(mvMedName, 20, OptionalInt.of(5), of(mvSaveBtn)),
-                        Tuple.of(mvMedUnitCost, 10, OptionalInt.of(1), of(mvSaveBtn)),
-                        Tuple.of(mvUnits, 3, OptionalInt.of(1), of(mvSaveBtn)));
+        javaslang.collection.List<Tuple3<TextInputControl, Integer, OptionalInt>> minMaxSizes
+                = of(Tuple.of(mvMedName, 20, OptionalInt.of(5)),
+                        Tuple.of(mvMedUnitCost, 10, OptionalInt.of(1)),
+                        Tuple.of(mvUnits, 3, OptionalInt.of(1)));
         minMaxSizes.forEach(CommonUtil::addTextLimiter);
+        //save button should only appear if all the fields meet the criteria
+        mvSaveBtn.disableProperty().bind(Bindings.or(mvMedName.textProperty().lessThan(new SimpleStringProperty("aaaa")),
+                mvMedUnitCost.textProperty().isEmpty()).or(mvUnits.textProperty().isEmpty()));
         onTableRowClickHandler();
     }
 

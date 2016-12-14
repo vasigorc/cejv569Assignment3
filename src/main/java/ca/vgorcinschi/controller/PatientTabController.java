@@ -32,14 +32,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
-import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static ca.vgorcinschi.util.CommonUtil.invokeBoolMethod;
 import static java.util.Optional.*;
 import java.util.OptionalInt;
-import javafx.scene.Node;
-import javaslang.Tuple4;
+import javaslang.Tuple3;
+import static javaslang.collection.List.of;
 
 /**
  * FXML Controller class
@@ -236,14 +235,14 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
     @FXML
     public void forwardPatient() {
         int currentIndex = currentMainViewIndex(patient -> currentPatient.getPatientId() == patient.getPatientId());
-        if (currentIndex < (observableList.size()-1)) {
+        if (currentIndex < (observableList.size() - 1)) {
             setCurrentPatient(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Patient.class));
             bindMainView();
         }
         //en-/disable the rewind button based on the current index
         invokeBoolMethod(javaslang.collection.List.of(
                 Tuple.of("setDisable", mvForward)
-        ), currentIndex >= (observableList.size()-1));
+        ), currentIndex >= (observableList.size() - 1));
     }
 
     @Override
@@ -252,11 +251,14 @@ public class PatientTabController extends AbstractTabController<Patient> impleme
         //from JDK 9 - meanwhile we can use JavaSlang
         //set the observable for each element that has ONLY max constraints
         of(Tuple.of(mvPatientDiagnosis, 100)).forEach(tuple -> CommonUtil.addTextLimiter(tuple._1(), tuple._2()));
-        javaslang.collection.List<Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>>> minMaxSizes
-                = of(Tuple.of(mvPatientLastName, 20, OptionalInt.of(2), of(mvSaveBtn)),
-                        Tuple.of(mvPatientFirstName, 15, OptionalInt.of(1), of(mvSaveBtn)));
+        javaslang.collection.List<Tuple3<TextInputControl, Integer, OptionalInt>> minMaxSizes
+                = of(Tuple.of(mvPatientLastName, 20, OptionalInt.of(1)),
+                        Tuple.of(mvPatientFirstName, 15, OptionalInt.of(1)));
         //and for each of the minMaxSizes
         minMaxSizes.forEach(CommonUtil::addTextLimiter);
+        //save button should only appear if all the fields meet the criteria
+        mvSaveBtn.disableProperty().bind(Bindings.or(mvPatientLastName.textProperty().isEmpty(),
+                mvPatientFirstName.textProperty().isEmpty()));
         //for the name filter
         nameFilter.textProperty().addListener((arg0, oldValue, newValue) -> {
             //we can only search by name or id, not both!

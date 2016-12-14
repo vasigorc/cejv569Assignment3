@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -24,6 +25,7 @@ import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javaslang.Tuple2;
+import javaslang.Tuple3;
 import javaslang.Tuple4;
 import javaslang.collection.List;
 import javaslang.control.Try;
@@ -103,17 +105,16 @@ public class CommonUtil {
 
     //set JavaFX TextField characters limit
     public static void addTextLimiter(final TextInputControl tf, final int maxLength) {
-        addTextLimiter(tf, maxLength, OptionalInt.empty(), null);
+        addTextLimiter(tf, maxLength, OptionalInt.empty());
     }
 
-    public static void addTextLimiter(final TextInputControl tf, final int maxLength, OptionalInt minLength, List<Node> observers) {
+    public static void addTextLimiter(final TextInputControl tf, final int maxLength, OptionalInt minLength) {
         tf.textProperty().addListener((ObservableValue<? extends String> ov, String t, String t1) -> {
             if (tf.getText().length() > maxLength) {
                 String s = tf.getText().substring(0, maxLength);
                 tf.setText(s);
             }
-            if (minLength.isPresent() && observers != null) {
-                observers.forEach(n -> n.setDisable(tf.getText().length() < minLength.getAsInt()));
+            if (minLength.isPresent()) {
                 if (tf.getText().length() < minLength.getAsInt()) {
                     tf.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.DOTTED, new CornerRadii(5), new BorderWidths(2))));
                 } else {
@@ -124,8 +125,8 @@ public class CommonUtil {
     }
 
     //handy tuple implementation
-    public static void addTextLimiter(Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>> t) {
-        addTextLimiter(t._1, t._2, t._3, t._4);
+    public static void addTextLimiter(Tuple3<TextInputControl, Integer, OptionalInt> t) {
+        addTextLimiter(t._1, t._2, t._3);
     }
 
     //here the string 2 is the method

@@ -37,6 +37,7 @@ import javafx.scene.input.MouseButton;
 import javafx.util.converter.BigDecimalStringConverter;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import javaslang.Tuple;
+import javaslang.Tuple3;
 import javaslang.Tuple4;
 import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,17 +58,17 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
     //bean that copies object properties
     @Autowired
     DozerMapper dozerMapper;
-
+    
     private Inpatient currentInpatient;
-
+    
     public Inpatient getCurrentInpatient() {
         return currentInpatient;
     }
-
+    
     public void setCurrentInpatient(Inpatient currentInpatient) {
         this.currentInpatient = currentInpatient;
     }
-
+    
     @FXML
     TableView<Inpatient> inpatientDataTable;
     //data table columns
@@ -87,37 +88,37 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
     //Main view bindings
     @FXML
     TextField mvInpatientID;
-
+    
     @FXML
     TextField mvRoomNumber;
-
+    
     @FXML
     TextField mvDailyRate;
-
+    
     @FXML
     TextField mvSupplies;
-
+    
     @FXML
     TextField mvServices;
-
+    
     @FXML
     JFXDatePicker mvDateOfInpatient;
-
+    
     @FXML
     JFXDatePicker mvTimeOfInpatient;
-
+    
     @FXML
     Button mvAddBtn;
-
+    
     @FXML
     Button mvDeleteBtn;
-
+    
     @FXML
-    Button mvSaveBtn;
-
+    Button mvInpSaveBtn;
+    
     @FXML
     Button mvRewind;
-
+    
     @FXML
     Button mvForward;
 
@@ -142,30 +143,30 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
                 .servicesProperty());
         javaslang.collection.List.of(dailyRateColumn, suppliesColumn, servicesColumn)
                 .forEach(c -> c.setCellFactory(TextFieldTableCell.forTableColumn(
-                                        new CurrencyBigDecimalConverter(Locale.CANADA_FRENCH))));
+                new CurrencyBigDecimalConverter(Locale.CANADA_FRENCH))));
         initializeListeners();
     }
-
+    
     @FXML
     public void newInpatient() {
         setCurrentInpatient(dozerMapper.dozer().map(defaultInpatient(currentPatient.getPatientId()), Inpatient.class));
         bindMainView();
     }
-
+    
     @FXML
     public void deleteInpatient() {
         if (service.deleteDetailRecord(currentInpatient)) {
             execute();
         }
     }
-
+    
     @FXML
     public void saveInpatient() {
         if (service.saveDetailRecord(currentInpatient)) {
             execute();
         }
     }
-
+    
     @FXML
     public void rewindInpatient() {
         int currentIndex = currentMainViewIndex(inpatient -> currentInpatient.getId() == inpatient.getId());
@@ -178,7 +179,7 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
                 Tuple.of("setDisable", mvRewind)
         ), currentIndex <= 0);
     }
-
+    
     @FXML
     public void forwardInpatient() {
         int currentIndex = currentMainViewIndex(patient -> currentInpatient.getId() == patient.getId());
@@ -191,12 +192,12 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
                 Tuple.of("setDisable", mvForward)
         ), currentIndex >= (observableList.size() - 1));
     }
-
+    
     @Override
     public void execute() {
         mediator.reloadPatient();
     }
-
+    
     @Override
     public void populateTableView(List<Inpatient> list) {
         observableList = FXCollections.observableArrayList(list);
@@ -204,7 +205,7 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
         notifyListListeners();
         bindMainView();
     }
-
+    
     @Override
     public void bindMainView() {
         //a new medication or the one that is chosen
@@ -223,7 +224,7 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
         mvSupplies.textProperty().bindBidirectional(inpatient.suppliesProperty(), new BigDecimalStringConverter());
         bindTemporals(inpatient);
     }
-
+    
     @Override
     public void notifyListListeners() {
         if (!observableList.isEmpty()) {//only if there isn't an arrayindexoutofbound
@@ -233,21 +234,25 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
             currentInpatient = dozerMapper.dozer().map(defaultInpatient(currentPatient.getPatientId()), Inpatient.class);
         }
     }
-
+    
     @Override
     public void initializeListeners() {
-        //set the observables for elements that have min and max length constraints
-        javaslang.collection.List<Tuple4<TextInputControl, Integer, OptionalInt, javaslang.collection.List<Node>>> minMaxSizes
-                = of(Tuple.of(mvRoomNumber, 10, OptionalInt.of(1), of(mvSaveBtn)),
-                        Tuple.of(mvServices, 10, OptionalInt.of(1), of(mvSaveBtn)),
-                        Tuple.of(mvSupplies, 10, OptionalInt.of(1), of(mvSaveBtn)),
-                        Tuple.of(mvDailyRate, 10, OptionalInt.of(1), of(mvSaveBtn)));
+        //set the observables for elements that have min and max length constraints        
+        javaslang.collection.List<Tuple3<TextInputControl, Integer, OptionalInt>> minMaxSizes
+                = of(Tuple.of(mvRoomNumber, 10, OptionalInt.of(1)),
+                        Tuple.of(mvServices, 7, OptionalInt.empty()),
+                        Tuple.of(mvSupplies, 7, OptionalInt.empty()),
+                        Tuple.of(mvDailyRate, 7, OptionalInt.empty()));
         minMaxSizes.forEach(CommonUtil::addTextLimiter);
+        //save button should only appear if all the fields meet the criteria
+        mvInpSaveBtn.disableProperty().bind(Bindings.or(mvServices.textProperty().isEmpty(),
+                mvSupplies.textProperty().isEmpty()).or(mvRoomNumber.textProperty().isEmpty())
+                .or(mvDailyRate.textProperty().isEmpty()));
         //only double fields
         of(mvServices, mvSupplies, mvDailyRate).forEach(CommonUtil::doubleListener);
         onTableRowClickHandler();
     }
-
+    
     @Override
     public void onTableRowClickHandler() {
         //set a row factory for the table view
@@ -265,7 +270,7 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
             return row;
         });
     }
-
+    
     @Override
     public void bindTemporals(Inpatient r) {
         //composite bindings for the inpatient date
@@ -283,11 +288,11 @@ public class InpatientTabController extends AbstractTabController<Inpatient> imp
         Bindings.bindBidirectional(mvDateOfInpatient.valueProperty(), inpatientDate);
         Bindings.bindBidirectional(mvTimeOfInpatient.timeProperty(), inpatientTime);
     }
-
+    
     @Override
     public void setCurrentPatient(Patient currentPatient) {
         super.setCurrentPatient(currentPatient); //To change body of generated methods, choose Tools | Templates.        
         populateTableView(getCurrentPatient().getInpatients());
     }
-
+    
 }
