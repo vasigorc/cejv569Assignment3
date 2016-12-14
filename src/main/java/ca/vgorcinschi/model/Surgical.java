@@ -185,7 +185,7 @@ public class Surgical implements Serializable, Identifiable {
         return Objects.equals(this.supplies.get(), other.supplies.get());
     }
     
-    public static Surgical defaultInpatient(int patientId) {
+    public static Surgical defaultSurgical(int patientId) {
         return new Surgical(0, patientId, LocalDateTime.now(ZoneId.systemDefault()), "", null, null, null);
     }
 

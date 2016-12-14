@@ -1,17 +1,37 @@
 package ca.vgorcinschi.controller;
 
+import ca.vgorcinschi.controller.helpers.CurrencyBigDecimalConverter;
 import ca.vgorcinschi.dao.PatientDBService;
+import ca.vgorcinschi.model.Patient;
 import ca.vgorcinschi.model.Surgical;
+import static ca.vgorcinschi.model.Surgical.defaultSurgical;
+import ca.vgorcinschi.util.CommonUtil;
 import ca.vgorcinschi.util.DozerMapper;
 import com.jfoenix.controls.JFXDatePicker;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import static java.time.format.DateTimeFormatter.ofLocalizedDateTime;
+import static java.time.format.FormatStyle.MEDIUM;
+import static java.time.format.FormatStyle.SHORT;
 import java.util.List;
+import java.util.Locale;
+import java.util.OptionalInt;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.util.converter.LocalDateTimeStringConverter;
+import javaslang.Tuple;
+import javaslang.Tuple3;
+import static javaslang.collection.List.of;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -69,24 +89,43 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
     @FXML
     TextField mvSurgeonFee;
     @FXML
-    TextField mvSuppliesFee;
+    TextArea mvSuppliesFee;
     @FXML
-    JFXDatePicker mvSurgicalDate;    
+    JFXDatePicker mvSurgicalDate;
     @FXML
-    JFXDatePicker mvSurgicalTime;    
+    JFXDatePicker mvSurgicalTime;
     @FXML
-    Button mvAddBtn;    
+    Button mvAddBtn;
     @FXML
-    Button mvDeleteBtn;    
+    Button mvDeleteBtn;
     @FXML
-    Button mvSaveBtn;    
+    Button mvSaveBtn;
     @FXML
-    Button mvRewind;    
+    Button mvRewind;
     @FXML
     Button mvForward;
+
     @FXML
     public void initialize() {
-        // TODO
+        idColumn.setCellValueFactory(cellData -> cellData.getValue()
+                .idProperty());
+        surgicalDateColumn.setCellValueFactory(cellData -> cellData.getValue()
+                .dateOfSurgery());
+        surgicalDateColumn.setCellFactory(TextFieldTableCell.forTableColumn(
+                new LocalDateTimeStringConverter(ofLocalizedDateTime(MEDIUM, SHORT),
+                        ofLocalizedDateTime(MEDIUM, MEDIUM))));
+        surgeryColumn.setCellValueFactory(cellData -> cellData.getValue()
+                .surgeryProperty());
+        roomFeeColumn.setCellValueFactory(cellData -> cellData.getValue()
+                .roomFeeProperty());
+        surgeonFeeColumn.setCellValueFactory(cellData -> cellData.getValue()
+                .surgeonFeeProperty());
+        suppliesColumn.setCellValueFactory(cellData -> cellData.getValue()
+                .suppliesProperty());
+        javaslang.collection.List.of(roomFeeColumn, suppliesColumn, surgeonFeeColumn)
+                .forEach(c -> c.setCellFactory(TextFieldTableCell.forTableColumn(
+                new CurrencyBigDecimalConverter(Locale.CANADA_FRENCH))));
+        initializeListeners();
     }
 
     @Override
@@ -121,7 +160,10 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
 
     @Override
     public void populateTableView(List<Surgical> list) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        observableList = FXCollections.observableArrayList(list);
+        surgicalDataTable.setItems(observableList);
+        notifyListListeners();
+        //bindMainView();
     }
 
     @Override
@@ -131,21 +173,58 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
 
     @Override
     public void notifyListListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         if (!observableList.isEmpty()) {//only if there isn't an arrayindexoutofbound
+            currentSurgical = dozerMapper.dozer().map(observableList.get(0), Surgical.class);
+        } else {
+            //if the patient doesn't have an inpatient, set the current to a new one
+            currentSurgical = dozerMapper.dozer().map(defaultSurgical(currentPatient.getPatientId()), Surgical.class);
+        }
     }
 
     @Override
     public void initializeListeners() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //set the observables for elements that have min and max length constraints        
+        javaslang.collection.List<Tuple3<TextInputControl, Integer, OptionalInt>> minMaxSizes
+                = of(Tuple.of(mvSurgery, 10, OptionalInt.of(1)),
+                        Tuple.of(mvRoomFee, 7, OptionalInt.empty()),
+                        Tuple.of(mvSuppliesFee, 7, OptionalInt.empty()),
+                        Tuple.of(mvSurgeonFee, 7, OptionalInt.empty()));
+        minMaxSizes.forEach(CommonUtil::addTextLimiter);
+        //save button should only appear if all the fields meet the criteria
+        mvSaveBtn.disableProperty().bind(Bindings.or(mvSurgery.textProperty().isEmpty(),
+                mvRoomFee.textProperty().isEmpty()).or(mvSuppliesFee.textProperty().isEmpty())
+                .or(mvSurgeonFee.textProperty().isEmpty()));
+        //only double fields
+        of(mvRoomFee, mvSuppliesFee, mvSurgeonFee).forEach(CommonUtil::doubleListener);
+        onTableRowClickHandler();
     }
 
     @Override
     public void onTableRowClickHandler() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //set a row factory for the table view
+        surgicalDataTable.setRowFactory(table -> {
+            //a row of records
+            TableRow<Surgical> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) {
+                    Surgical clickedRow = row.getItem();
+                    //set new current patient and bind it to the main view
+                    setCurrentSurgical(dozerMapper.dozer().map(clickedRow, Surgical.class));
+                    bindMainView();
+                }
+            });
+            return row;
+        });
     }
 
     @Override
     public void bindTemporals(Surgical r) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setCurrentPatient(Patient currentPatient) {
+        super.setCurrentPatient(currentPatient); //To change body of generated methods, choose Tools | Templates.
+        populateTableView(getCurrentPatient().getSurgicals());
     }
 }

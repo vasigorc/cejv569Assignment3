@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -17,7 +18,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.65" fx:controller="ca.vgorcinschi.controller.SurgicalTabController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.SurgicalTabController">
     <stylesheets>
         <URL value="@/styles/surgicaltab.css" />
     </stylesheets>
@@ -66,14 +67,14 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
                      <children>
-                              <Label fx:id="mvSuppliesFee" text="%inpatientSupplies" />
-                              <TextField fx:id="mvServices" prefWidth="80.0" />
+                              <Label text="%inpatientSupplies" />
+                        <TextArea fx:id="mvSuppliesFee" prefHeight="200.0" prefWidth="200.0" />
                      </children>
                      <GridPane.margin>
                         <Insets left="25.0" />
                      </GridPane.margin>
                   </HBox>
-                        <Label text="%dateOfSurgery" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                        <Label prefHeight="0.0" prefWidth="110.0" text="%dateOfSurgery" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                             <GridPane.margin>
                                 <Insets right="10.0" />
                             </GridPane.margin>

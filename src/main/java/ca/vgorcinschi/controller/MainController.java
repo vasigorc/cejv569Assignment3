@@ -25,6 +25,7 @@ public class MainController implements TabMediator {
         patientTabController.setMediator(this);
         medicationTabController.setMediator(this);
         inpatientTabController.setMediator(this);
+        surgicalTabController.setMediator(this);
         updatePatient();
     }    
 
@@ -37,7 +38,6 @@ public class MainController implements TabMediator {
 
     @Override
     public void reloadPatient() {
-        //patientTabController.getService().savePatient(patientTabController.getCurrentPatient());
         patientTabController.updateTable(null);
         updatePatient();
     }    
