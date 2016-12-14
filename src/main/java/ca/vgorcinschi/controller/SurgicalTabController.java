@@ -137,32 +137,53 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        mediator.reloadPatient();
     }
 
     @FXML
     public void newSurgical() {
-        //TODO
+        setCurrentSurgical(dozerMapper.dozer().map(defaultSurgical(currentPatient.getPatientId()), Surgical.class));
+        bindMainView();
     }
 
     @FXML
     public void deleteSurgical() {
-        //TODO
+        if (service.deleteDetailRecord(currentSurgical)) {
+            execute();
+        }
     }
 
     @FXML
     public void saveSurgical() {
-        //TODO
+        if (service.saveDetailRecord(currentSurgical)) {
+            execute();
+        }
     }
 
     @FXML
     public void rewindSurgical() {
-        //TODO
+        int currentIndex = currentMainViewIndex(inpatient -> currentSurgical.getId() == inpatient.getId());
+        if (currentIndex > 0) {
+            setCurrentSurgical(dozerMapper.dozer().map(observableList.get(currentIndex - 1), Surgical.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvRewind)
+        ), currentIndex <= 0);
     }
 
     @FXML
     public void forwardSurgical() {
-        //TODO
+        int currentIndex = currentMainViewIndex(patient -> currentSurgical.getId() == patient.getId());
+        if (currentIndex < (observableList.size() - 1)) {
+            setCurrentSurgical(dozerMapper.dozer().map(observableList.get(currentIndex + 1), Surgical.class));
+            bindMainView();
+        }
+        //en-/disable the rewind button based on the current index
+        invokeBoolMethod(javaslang.collection.List.of(
+                Tuple.of("setDisable", mvForward)
+        ), currentIndex >= (observableList.size() - 1));
     }
 
     @Override
@@ -206,7 +227,7 @@ public class SurgicalTabController extends AbstractTabController<Surgical> imple
     public void initializeListeners() {
         //set the observables for elements that have min and max length constraints        
         javaslang.collection.List<Tuple3<TextInputControl, Integer, OptionalInt>> minMaxSizes
-                = of(Tuple.of(mvSurgery, 10, OptionalInt.of(1)),
+                = of(Tuple.of(mvSurgery, 50, OptionalInt.of(1)),
                         Tuple.of(mvRoomFee, 7, OptionalInt.empty()),
                         Tuple.of(mvSuppliesFee, 7, OptionalInt.empty()),
                         Tuple.of(mvSurgeonFee, 7, OptionalInt.empty()));
