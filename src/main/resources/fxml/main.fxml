@@ -50,6 +50,9 @@
                             </font>
                         </Text>
                     </left>
+               <center>
+                  <Button mnemonicParsing="false" onAction="#openPopUp" text="%report" BorderPane.alignment="CENTER" />
+               </center>
                 </BorderPane>
                 <TabPane prefHeight="700.0" prefWidth="900.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE">
                     <tabs>

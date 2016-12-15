@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<GridPane fx:id="reportGrid" maxHeight="-Infinity" maxWidth="-Infinity" 
+          minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.ReportController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="206.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="421.0" minWidth="10.0" prefWidth="394.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2">
+         <left>
+            <Text fx:id="repPtId" strokeType="OUTSIDE" strokeWidth="0.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="10.0" />
+               </BorderPane.margin>
+            </Text>
+         </left>
+         <center>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Text fx:id="repPtLasName" strokeType="OUTSIDE" strokeWidth="0.0" />
+                  <Text fx:id="repPtFirstName" strokeType="OUTSIDE" strokeWidth="0.0" />
+               </children>
+            </HBox>
+         </center>
+      </BorderPane>
+      <Label text="%admissionDate" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+      <Text fx:id="repPtAdmDate" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Text>
+      <Label text="%releaseDate" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+      <Text fx:id="repPtRelDate" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Text>
+      <Label text="%totalPriceInpatients" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+      <Label text="%totalPriceMedication" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+      <Label text="%totalPriceSurgery" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+      <Label text="%grandTotal" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Text fx:id="repTotalPriceInpatients" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Text>
+      <Text fx:id="repTotalPriceMedication" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Text>
+      <Text fx:id="repTotalPriceSurgery" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+      </Text>
+      <Text fx:id="repGrandTotal" strokeType="OUTSIDE" strokeWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+         <GridPane.margin>
+            <Insets left="10.0" />
+         </GridPane.margin>
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Text>
+      <Button fx:id="repPtCloseBtn" mnemonicParsing="false" onAction="#closePopUp" text="%closePopup" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+   </children>
+</GridPane>

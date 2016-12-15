@@ -1,5 +1,6 @@
 package ca.vgorcinschi;
 
+import ca.vgorcinschi.controller.MainController;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.application.Application;
@@ -29,8 +30,9 @@ public class App extends Application {
         ResourceBundle bundle = ResourceBundle.getBundle("MessagesBundle", Locale.CANADA_FRENCH);
         FXMLLoader myLoader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"), bundle);
         /**
-         * the idea of populating the controller factory with Spring's appcontext
-         * beans comes from here: https://www.youtube.com/watch?v=hjeSOxi3uPg
+         * the idea of populating the controller factory with Spring's
+         * appcontext beans comes from here:
+         * https://www.youtube.com/watch?v=hjeSOxi3uPg
          */
         myLoader.setControllerFactory(applicationContext::getBean);
         rootNode = myLoader.load();
@@ -45,14 +47,16 @@ public class App extends Application {
         stage.setResizable(true);
         stage.centerOnScreen();
         stage.show();
+        //plugin another stage (for pop-up) into the main controller
+        applicationContext.getBean(MainController.class).setPopUp(new Stage());
     }
 
     public static void main(String[] args) {
         Application.launch(args);
     }
-    
+
     @Override
-	public void stop() throws Exception {
-		applicationContext.close();
-	}
+    public void stop() throws Exception {
+        applicationContext.close();
+    }
 }
