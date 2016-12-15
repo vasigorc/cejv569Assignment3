@@ -1,40 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="900.0" 
-            xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="ca.vgorcinschi.controller.MainController">
+<AnchorPane id="AnchorPane" prefHeight="750.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ca.vgorcinschi.controller.MainController">
     <stylesheets>
         <URL value="@/styles/main.css" />
     </stylesheets>
     <children>
-        <TabPane prefHeight="700.0" prefWidth="900.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE">
-            <tabs>
-                <Tab text="%patientTab">
-                    <content>
-                        <fx:include fx:id="patientTab" source="PatientTab.fxml" />
-                    </content>
-                </Tab>
-                <Tab text="%inpatientTab">
-                    <content>
-                        <fx:include fx:id="inpatientTab" source="InpatientTab.fxml" />
-                    </content>
-                </Tab>
-                <Tab text="%medicationTab">
-                    <content>
-                        <fx:include fx:id="medicationTab" source="MedicationTab.fxml" />
-                    </content>
-                </Tab>
-                <Tab text="%surgicalTab">
-                    <content>
-                        <fx:include fx:id="surgicalTab" source="SurgicalTab.fxml" />
-                    </content>
-                </Tab>
-            </tabs>
-        </TabPane>
+        <VBox>
+            <children>
+                <BorderPane prefHeight="50.0" prefWidth="900.0">
+                    <right>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                            <children>
+                                <Button fx:id="quitBtn" mnemonicParsing="false" onAction="#quit" styleClass="roundBtn" text="%exitBtn">
+                                    <graphic>
+                                        <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../images/exit-128.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                            <padding>
+                                <Insets right="5.0" />
+                            </padding>
+                        </HBox>
+                    </right>
+                    <left>
+                        <Text fx:id="currentPatient" fill="#1972b5" strokeType="OUTSIDE" strokeWidth="0.0" BorderPane.alignment="CENTER">
+                            <BorderPane.margin>
+                                <Insets left="15.0" />
+                            </BorderPane.margin>
+                            <font>
+                                <Font size="29.0" />
+                            </font>
+                        </Text>
+                    </left>
+                </BorderPane>
+                <TabPane prefHeight="700.0" prefWidth="900.0" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="%patientTab">
+                            <content>
+                                <fx:include fx:id="patientTab" source="PatientTab.fxml" />
+                            </content>
+                        </Tab>
+                        <Tab text="%inpatientTab">
+                            <content>
+                                <fx:include fx:id="inpatientTab" source="InpatientTab.fxml" />
+                            </content>
+                        </Tab>
+                        <Tab text="%medicationTab">
+                            <content>
+                                <fx:include fx:id="medicationTab" source="MedicationTab.fxml" />
+                            </content>
+                        </Tab>
+                        <Tab text="%surgicalTab">
+                            <content>
+                                <fx:include fx:id="surgicalTab" source="SurgicalTab.fxml" />
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>
